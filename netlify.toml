@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# React Router handles routing client-side — without this, refreshing
+# on any deep link (e.g. /proprietor/students) hits Netlify's server
+# directly, which has no idea what that path is and 404s. This tells
+# Netlify to always serve index.html and let the app's own router
+# take over.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
