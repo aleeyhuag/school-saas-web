@@ -292,9 +292,16 @@ export default function StudentsPage() {
             </p>
             <div className="bg-warning-soft border border-warning/20 rounded-lg p-3 mb-4 space-y-1">
               <p className="text-xs text-muted">Login email:</p>
-              <p className="font-mono text-sm text-ink">{creationResult.login_email}</p>
-              <p className="text-xs text-muted mt-2">Temporary password (share this securely):</p>
-              <p className="font-mono text-sm text-ink">{creationResult.temporary_password}</p>
+              <p className="font-mono text-sm text-ink break-all">{creationResult.login_email}</p>
+              {creationResult.setup_link_sent ? (
+                <p className="text-sm text-success mt-2">A secure password setup link was sent to the student's email.</p>
+              ) : (
+                <>
+                  <p className="text-xs text-muted mt-2">System-generated login — give the student these credentials securely:</p>
+                  <p className="text-xs text-muted mt-2">Temporary password:</p>
+                  <p className="font-mono text-sm text-ink">{creationResult.temporary_password}</p>
+                </>
+              )}
             </div>
             <Button className="w-full" onClick={closeModal}>
               Done
@@ -399,7 +406,7 @@ export default function StudentsPage() {
             <div className="bg-warning-soft border border-warning/20 rounded-lg p-3 mb-4 space-y-1">
               <p className="text-xs text-muted">Login email:</p>
               <p className="font-mono text-sm text-ink">{loginRevealResult.login_email}</p>
-              <p className="text-xs text-muted mt-2">Temporary password (share this securely):</p>
+              <p className="text-xs text-muted mt-2">System-generated login — share this securely:</p>
               <p className="font-mono text-sm text-ink">{loginRevealResult.temporary_password}</p>
             </div>
             <Button className="w-full" onClick={() => setLoginRevealResult(null)}>Done</Button>

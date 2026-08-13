@@ -5,6 +5,7 @@ import * as schoolApi from '../../api/school';
 import { useAuth } from '../../context/AuthContext';
 import PageHeader from '../../components/PageHeader';
 import ChangePasswordCard from '../../components/ChangePasswordCard';
+import AccountProfileCard from '../../components/AccountProfileCard';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -32,6 +33,8 @@ export default function SettingsPage() {
       <PageHeader title="Settings" description="Your account and school configuration." />
 
       <div className="p-4 md:p-8 space-y-6 max-w-2xl">
+        <AccountProfileCard />
+
         <SchoolProfileCard />
 
         <ChangePasswordCard />

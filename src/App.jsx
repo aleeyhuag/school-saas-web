@@ -8,6 +8,7 @@ import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import SchoolsPage from './pages/super-admin/SchoolsPage';
 import PlatformStatsPage from './pages/super-admin/PlatformStatsPage';
 import PlatformBillingPage from './pages/super-admin/PlatformBillingPage';
+import SuperAdminBackupPage from './pages/super-admin/SuperAdminBackupPage';
 import ProprietorDashboard from './pages/ProprietorDashboard';
 import OverviewPage from './pages/proprietor/OverviewPage';
 import ClassesAndSubjectsPage from './pages/proprietor/ClassesAndSubjectsPage';
@@ -39,15 +40,16 @@ import TimetableViewPage from './pages/shared/TimetableViewPage';
 import ExamTimetableViewPage from './pages/shared/ExamTimetableViewPage';
 import ResultsExportPage from './pages/shared/ResultsExportPage';
 import AnnouncementsPage from './pages/shared/AnnouncementsPage';
+import AuditLogsPage from './pages/shared/AuditLogsPage';
+import AccountSettingsPage from './pages/shared/AccountSettingsPage';
 import SchoolHealthPage from './pages/shared/SchoolHealthPage';
 import BillingPage from './pages/proprietor/BillingPage';
+import BackupPage from './pages/proprietor/BackupPage';
 import PromotionPage from './pages/proprietor/PromotionPage';
 import MyClassPage from './pages/class-teacher/MyClassPage';
 import Contact from './pages/Contact';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
-import AuditLogsPage from './pages/shared/AuditLogsPage';
-import BackupPage from './pages/proprietor/BackupPage';
 
 export default function App() {
   return (
@@ -77,6 +79,8 @@ export default function App() {
           <Route index element={<SchoolsPage />} />
           <Route path="stats" element={<PlatformStatsPage />} />
           <Route path="billing" element={<PlatformBillingPage />} />
+          <Route path="backup" element={<SuperAdminBackupPage />} />
+          <Route path="settings" element={<AccountSettingsPage />} />
         </Route>
 
         {/* Proprietor: a layout shell (sidebar) with nested sub-pages —
@@ -92,8 +96,6 @@ export default function App() {
         >
           <Route index element={<OverviewPage />} />
           <Route path="classes-subjects" element={<ClassesAndSubjectsPage />} />
-          <Route path="audit" element={<AuditLogsPage />} />
-          <Route path="backup" element={<BackupPage />} />
           <Route path="students" element={<StudentsPage />} />
           <Route path="promotion" element={<PromotionPage />} />
           <Route path="staff" element={<StaffPage />} />
@@ -108,6 +110,8 @@ export default function App() {
           <Route path="announcements" element={<AnnouncementsPage />} />
           <Route path="school-health" element={<SchoolHealthPage />} />
           <Route path="billing" element={<BillingPage />} />
+          <Route path="backup" element={<BackupPage />} />
+          <Route path="audit" element={<AuditLogsPage />} />
         </Route>
 
         <Route
@@ -119,7 +123,6 @@ export default function App() {
           }
         >
           <Route index element={<OverviewPage />} />
-          <Route path="audit" element={<AuditLogsPage />} />
           <Route path="classes-subjects" element={<ClassesAndSubjectsPage />} />
           <Route path="students" element={<StudentsPage />} />
           <Route path="promotion" element={<PromotionPage />} />
@@ -134,6 +137,7 @@ export default function App() {
           <Route path="results-export" element={<ResultsExportPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
           <Route path="school-health" element={<SchoolHealthPage />} />
+          <Route path="audit" element={<AuditLogsPage />} />
         </Route>
 
         <Route

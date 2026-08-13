@@ -16,9 +16,9 @@ const NAV_ITEMS = [
   { to: '/proprietor/results-export', label: 'Results Export', icon: '⬇' },
   { to: '/proprietor/announcements', label: 'Announcements', icon: '📣' },
   { to: '/proprietor/school-health', label: 'School Health', icon: '♡' },
-  { to: '/proprietor/audit', label: 'Audit Log', icon: '◌' },
-  { to: '/proprietor/backup', label: 'Data Backup', icon: '⬇' },
   { to: '/proprietor/billing', label: 'Billing', icon: '💳' },
+  { to: '/proprietor/backup', label: 'Data Backup', icon: '⬇' },
+  { to: '/proprietor/audit', label: 'Audit Log', icon: '◌' },
   { to: '/proprietor/settings', label: 'Settings', icon: '⚙' },
 ];
 

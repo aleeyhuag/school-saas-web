@@ -48,7 +48,7 @@ export default function StaffPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState(null);
-  const [result, setResult] = useState(null); // shows the temporary password after a successful invite
+  const [result, setResult] = useState(null);
 
   const inviteMutation = useMutation({
     mutationFn: academicApi.inviteUser,
@@ -304,7 +304,7 @@ export default function StaffPage() {
             <p className="text-sm text-ink mb-3">{resetResult.message}</p>
             <div className="bg-warning-soft border border-warning/20 rounded-lg p-3 mb-4">
               <p className="text-xs text-muted mb-1">New temporary password:</p>
-              <p className="font-mono text-sm text-ink">{resetResult.temporary_password}</p>
+              {resetResult.setup_link_sent ? <p className="text-sm text-success">A secure password setup link was sent to the staff member's email.</p> : <p className="font-mono text-sm text-ink">{resetResult.temporary_password}</p>}
             </div>
             <Button className="w-full" onClick={() => setResetResult(null)}>
               Done

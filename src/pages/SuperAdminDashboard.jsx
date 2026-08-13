@@ -5,6 +5,8 @@ const NAV_ITEMS = [
   { to: '/super-admin', label: 'Schools', icon: '⌂', end: true },
   { to: '/super-admin/stats', label: 'Platform Stats & Audit', icon: '♡' },
   { to: '/super-admin/billing', label: 'Billing', icon: '💳' },
+  { to: '/super-admin/backup', label: 'Platform Backup', icon: '⬇' },
+  { to: '/super-admin/settings', label: 'Account', icon: '⚙' },
 ];
 
 /**

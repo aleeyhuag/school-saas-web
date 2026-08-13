@@ -38,3 +38,7 @@ export function resetPassword({ token, email, password, password_confirmation })
     .post('/auth/reset-password', { token, email, password, password_confirmation })
     .then((res) => res.data);
 }
+
+export function updateProfile(payload) {
+  return api.put('/auth/profile', payload).then((res) => res.data);
+}

@@ -20,3 +20,17 @@ export const getPlatformStats = () => api.get('/platform/stats').then((r) => r.d
 
 export const deleteSchool = (schoolId, confirmName) =>
   api.delete(`/platform/schools/${schoolId}`, { data: { confirm_name: confirmName } }).then((r) => r.data);
+export async function downloadPlatformBackup() {
+  const response = await api.get('/platform/backup/download', { responseType: 'blob' });
+  const disposition = response.headers['content-disposition'] || '';
+  const match = disposition.match(/filename="?([^";]+)"?/i);
+  const filename = match?.[1] || `eduventor_platform_backup_${new Date().toISOString().slice(0,10)}.zip`;
+  const url = URL.createObjectURL(response.data);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}

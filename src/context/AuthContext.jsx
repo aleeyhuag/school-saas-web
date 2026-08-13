@@ -85,7 +85,19 @@ export function AuthProvider({ children }) {
    */
   async function refreshAccessibleSchools() {
     const me = await authApi.fetchCurrentUser();
+    setUser(me.user);
+    setRoles(me.roles ?? []);
+    setSchool(me.school);
     setAccessibleSchools(me.accessible_schools ?? []);
+  }
+
+  async function refreshCurrentUser() {
+    const me = await authApi.fetchCurrentUser();
+    setUser(me.user);
+    setRoles(me.roles ?? []);
+    setSchool(me.school);
+    setAccessibleSchools(me.accessible_schools ?? []);
+    return me;
   }
 
   /**
