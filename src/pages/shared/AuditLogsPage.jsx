@@ -28,10 +28,20 @@ export default function AuditLogsPage() {
   const pagination = logsQuery.data;
 
   const userOptions = useMemo(() => meta?.users ?? [], [meta]);
+  const [exporting, setExporting] = useState(false);
+
+  async function exportAudit() {
+    setExporting(true);
+    try {
+      await governanceApi.downloadSchoolModule('audit');
+    } finally {
+      setExporting(false);
+    }
+  }
 
   return (
     <>
-      <PageHeader title="Audit Log" description="Review important actions performed in your school system." />
+      <PageHeader title="Audit Log" description="Review important actions performed in your school system." action={<Button type="button" disabled={exporting} onClick={exportAudit}>{exporting ? 'Preparing…' : 'Export audit'}</Button>} />
       <div className="p-4 md:p-8 space-y-5">
         <Card>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-3">

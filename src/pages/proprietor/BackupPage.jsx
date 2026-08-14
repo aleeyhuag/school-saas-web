@@ -5,38 +5,81 @@ import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 
+const MODULES = [
+  ['students', 'Students', 'Student records and enrollment data.'],
+  ['staff', 'Staff', 'Staff/user records without passwords or security tokens.'],
+  ['classes', 'Classes', 'Classes and class-subject assignments.'],
+  ['attendance', 'Attendance', 'Attendance records.'],
+  ['results', 'Results', 'Subject scores and result approvals.'],
+  ['payments', 'Payments', 'Subscriptions, payments and payment reviews.'],
+  ['fees', 'Fees', 'Fee structures and fee payment records.'],
+  ['audit', 'Audit', 'School audit history.'],
+  ['timetable', 'Timetable', 'Class and examination timetable data.'],
+  ['announcements', 'Announcements', 'Announcements and read-state records.'],
+];
+
 export default function BackupPage() {
   const [message, setMessage] = useState(null);
-  const mutation = useMutation({
+  const [selectedModule, setSelectedModule] = useState('students');
+
+  const backupMutation = useMutation({
     mutationFn: governanceApi.downloadSchoolBackup,
-    onSuccess: () => setMessage({ type: 'success', text: 'Backup downloaded successfully. Store it somewhere secure.' }),
+    onSuccess: () => setMessage({ type: 'success', text: 'Full backup downloaded successfully. Store it somewhere secure.' }),
     onError: (error) => setMessage({ type: 'error', text: error.response?.data?.message ?? 'The backup could not be created.' }),
   });
 
+  const moduleMutation = useMutation({
+    mutationFn: governanceApi.downloadSchoolModule,
+    onSuccess: () => setMessage({ type: 'success', text: `${selectedModule} export downloaded successfully.` }),
+    onError: (error) => setMessage({ type: 'error', text: error.response?.data?.message ?? 'The module export could not be created.' }),
+  });
+
+  const busy = backupMutation.isPending || moduleMutation.isPending;
+
   return (
     <>
-      <PageHeader title="Data Backup" description="Download a portable copy of your school records before production and whenever you need one." />
-      <div className="p-4 md:p-8 max-w-3xl space-y-5">
-        <Card title="School data backup">
+      <PageHeader title="Data Backup & Export" description="Download a secure copy of your school records or export one module at a time." />
+      <div className="p-4 md:p-8 max-w-4xl space-y-5">
+        <Card title="Full school backup">
           <div className="space-y-4">
-            <p className="text-sm text-muted">The archive contains your school records, academic data, students, staff records, results, attendance, fees, timetable data, billing records, audit logs and referenced school files.</p>
+            <p className="text-sm text-muted">The archive contains school records, academic data, students, staff, results, attendance, fees, payments, timetable data, announcements, audit logs and referenced school files.</p>
             <div className="rounded-lg bg-primary-soft border border-border p-4 text-sm text-ink">
-              <strong>Security note:</strong> passwords, active login tokens, sessions and password-reset tokens are intentionally excluded. Protect the downloaded ZIP like any other sensitive school record.
+              <strong>Security:</strong> passwords, active login tokens, sessions and password-reset tokens are intentionally excluded. The ZIP is a recovery/data archive, not a runnable database dump.
             </div>
             {message && <p className={`text-sm rounded-lg px-3 py-2 ${message.type === 'success' ? 'text-success bg-success-soft' : 'text-danger bg-danger-soft'}`}>{message.text}</p>}
-            <Button type="button" disabled={mutation.isPending} onClick={() => { setMessage(null); mutation.mutate(); }}>
-              {mutation.isPending ? 'Preparing secure backup…' : 'Download full school backup'}
+            <Button type="button" disabled={busy} onClick={() => { setMessage(null); backupMutation.mutate(); }}>
+              {backupMutation.isPending ? 'Preparing secure backup…' : 'Download full school backup'}
             </Button>
           </div>
         </Card>
-        <Card title="What is included?">
+
+        <Card title="Module export">
+          <div className="space-y-4">
+            <p className="text-sm text-muted">Use a module export when you only need a particular dataset. Large tables are streamed during generation to avoid loading the whole school into memory.</p>
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-end">
+              <label className="text-sm text-ink">
+                <span className="block text-xs text-muted mb-1">Module</span>
+                <select className="w-full border border-border rounded-lg px-3 py-2 bg-surface" value={selectedModule} onChange={(e) => setSelectedModule(e.target.value)}>
+                  {MODULES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+              </label>
+              <Button disabled={busy} onClick={() => { setMessage(null); moduleMutation.mutate(selectedModule); }}>
+                {moduleMutation.isPending ? 'Preparing export…' : `Download ${selectedModule}`}
+              </Button>
+            </div>
+            <p className="text-xs text-muted">{MODULES.find(([value]) => value === selectedModule)?.[2]}</p>
+          </div>
+        </Card>
+
+        <Card title="What the full backup includes">
           <ul className="list-disc pl-5 text-sm text-muted space-y-2">
             <li>School profile and authorized user records without credentials.</li>
             <li>Students, classes, subjects, teacher assignments and promotions.</li>
             <li>Sessions, terms, attendance, assessments, scores and approvals.</li>
-            <li>Fees, payments, subscriptions and payment references.</li>
-            <li>Timetable, announcements and audit history.</li>
-            <li>Referenced school logo and payment-proof files when available.</li>
+            <li>Fees, subscriptions, payments, payment reviews and referenced payment proofs.</li>
+            <li>Timetable, announcements, notifications and audit history.</li>
+            <li>Referenced school logo and other supported school files when available.</li>
+            <li>Backup metadata including school, generator, timestamp, application and schema version.</li>
           </ul>
         </Card>
       </div>

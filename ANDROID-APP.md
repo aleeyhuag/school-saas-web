@@ -17,7 +17,7 @@ You'll need **Android Studio** installed (free, from developer.android.com) — 
 
 ## One decision to make before you go further: appId
 
-`capacitor.config.ts` currently has a placeholder: `appId: 'ng.komputech.schoolsaas'`. This is your app's permanent package identifier — **it cannot be changed after your first Play Store submission** without publishing as an entirely new app listing (losing reviews, install counts, everything). Lock in the product name first, then set this properly, e.g. `ng.komputech.eduventor` or whatever you land on — before you ever submit to the Play Store. Changing it now (pre-submission) is trivial: edit the `appId` line, then `npx cap sync android` again.
+`capacitor.config.ts` currently has a placeholder: `appId: 'ng.komputech.schoolsaas'`. This is your app's permanent package identifier — **it cannot be changed after your first Play Store submission** without publishing as an entirely new app listing (losing reviews, install counts, everything). Lock in the product name first, then set this properly, e.g. `ng.komputech.skulag` or whatever you land on — before you ever submit to the Play Store. Changing it now (pre-submission) is trivial: edit the `appId` line, then `npx cap sync android` again.
 
 ## Every time you change the web app
 

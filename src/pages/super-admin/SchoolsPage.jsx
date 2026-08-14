@@ -71,6 +71,10 @@ export default function SchoolsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['platform-schools'] }),
   });
 
+  const backupMutation = useMutation({
+    mutationFn: platformApi.downloadSchoolBackup,
+  });
+
   const [detailSchoolId, setDetailSchoolId] = useState(null);
   const detailQuery = useQuery({
     queryKey: ['platform-school-detail', detailSchoolId],
@@ -250,6 +254,17 @@ export default function SchoolsPage() {
                 {detailQuery.data.is_active ? 'Active' : 'Disabled'}
               </Badge>
             </p>
+            <div className="pt-4 mt-4 border-t border-border">
+              <p className="text-xs text-muted font-medium mb-2">Recovery</p>
+              <p className="text-xs text-muted mb-2">Download a complete recovery archive for this school. Credentials and active tokens are excluded.</p>
+              <Button
+                size="sm"
+                disabled={backupMutation.isPending}
+                onClick={() => backupMutation.mutate(detailQuery.data.id)}
+              >
+                {backupMutation.isPending ? 'Preparing backup…' : 'Download school backup'}
+              </Button>
+            </div>
             <div className="pt-4 mt-4 border-t border-border">
               <p className="text-xs text-danger font-medium mb-2">Danger zone</p>
               <p className="text-xs text-muted mb-2">
