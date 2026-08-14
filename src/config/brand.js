@@ -1,16 +1,11 @@
-// Single place to change once the product name is finalized —
-// Landing.jsx, the footer, Terms/Privacy/Contact pages, and (later)
-// the browser tab title + favicon should all read from here instead
-// of hardcoding "SchoolSuite" in multiple files.
-//
-// productName is still a placeholder pending a final decision.
-// parentCompany is set — this is what should show in the footer's
-// "by ..." line and the legal pages' "operated by" line regardless
-// of what the product ends up being called.
+// Central brand configuration. Keep public-facing product and company identity here.
 export const BRAND = {
-  productName: 'EduVentor',
-  parentCompany: 'VentorAG International',
-  supportEmail: 'support@yourdomain.ng', // placeholder — set to a real inbox before launch
-  legalEmail: 'legal@yourdomain.ng',
-  tagline: 'Manage. Teach. Grow.',
+  productName: 'Skulag',
+  parentCompany: 'AG Komputech',
+  supportEmail: 'support@skulag.com.ng',
+  legalEmail: 'legal@skulag.com.ng',
+  logoPath: '/skulag-mark.png',
+  fullLogoPath: '/skulag-logo.png',
+  faviconPath: '/skulag-favicon.png',
+  tagline: 'Smart School. Simple Solutions. Better Future.',
 };

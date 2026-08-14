@@ -8,10 +8,10 @@ export default function SiteFooter() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-6">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center text-white font-display font-bold text-xs">
-                {BRAND.productName.charAt(0)}
+              <div className="flex items-center gap-2">
+                <img src={BRAND.logoPath} alt={`${BRAND.productName} logo`} className="w-9 h-9 object-contain" />
+                <span className="font-display font-semibold text-ink text-sm">{BRAND.productName}</span>
               </div>
-              <span className="font-display font-semibold text-ink text-sm">{BRAND.productName}</span>
             </div>
             <p className="text-xs text-muted">School management, built for how Nigerian schools actually run.</p>
           </div>

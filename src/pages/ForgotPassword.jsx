@@ -4,6 +4,7 @@ import * as authApi from '../api/auth';
 import Button from '../components/ui/Button';
 import { Field, Input } from '../components/ui/FormFields';
 
+import { BRAND } from '../config/brand';
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -30,8 +31,12 @@ export default function ForgotPassword() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-bg">
       <div className="w-full max-w-sm bg-surface p-8 rounded-xl shadow-sm border border-border">
-        <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white font-display font-bold mb-4">
-          S
+        <div className="flex items-center gap-2 mb-4">
+          <img src={BRAND.logoPath} alt={`${BRAND.productName} logo`} className="w-12 h-12 object-contain" />
+          <div>
+            <p className="font-display font-bold text-xl text-ink">{BRAND.productName}</p>
+            <p className="text-[10px] uppercase tracking-wide text-muted">by {BRAND.parentCompany}</p>
+          </div>
         </div>
         <h1 className="text-2xl font-bold text-ink mb-1">Forgot password</h1>
         <p className="text-sm text-muted mb-6">

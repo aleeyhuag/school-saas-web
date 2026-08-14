@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
 import BranchSwitcher from './BranchSwitcher';
 import * as announcementsApi from '../api/announcements';
+import { BRAND } from '../config/brand';
 
 /**
  * The shell every dashboard renders inside: a sidebar with nav links
@@ -45,11 +46,11 @@ export default function DashboardLayout({ navItems, children }) {
               {school?.logo_url ? (
                 <img src={school.logo_url} alt="" className="w-full h-full object-cover" />
               ) : (
-                school?.name?.[0] ?? 'S'
+                <img src={BRAND.faviconPath} alt={`${BRAND.productName} logo`} className="w-full h-full object-contain p-1" />
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-ink truncate">{school?.name ?? 'Platform'}</p>
+              <p className="text-sm font-semibold text-ink truncate">{school?.name ?? BRAND.productName}</p>
               <p className="text-xs text-muted capitalize">{roles[0]?.replace('_', ' ')}</p>
             </div>
           </div>

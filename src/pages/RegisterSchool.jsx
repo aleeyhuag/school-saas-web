@@ -5,9 +5,9 @@ import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import { Field, Input } from '../components/ui/FormFields';
 
+import { BRAND } from '../config/brand';
 const EMPTY_FORM = {
   school_name: '', school_email: '', school_phone: '', school_address: '',
-  terms_accepted: false, privacy_acknowledged: false,
   admin_name: '', admin_email: '', admin_password: '', admin_password_confirmation: '',
 };
 
@@ -49,8 +49,12 @@ export default function RegisterSchool() {
         onSubmit={handleSubmit}
         className="w-full max-w-lg bg-surface p-6 md:p-8 rounded-xl shadow-sm border border-border"
       >
-        <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white font-display font-bold mb-4">
-          S
+        <div className="flex items-center gap-2 mb-4">
+          <img src={BRAND.logoPath} alt={`${BRAND.productName} logo`} className="w-12 h-12 object-contain" />
+          <div>
+            <p className="font-display font-bold text-xl text-ink">{BRAND.productName}</p>
+            <p className="text-[10px] uppercase tracking-wide text-muted">by {BRAND.parentCompany}</p>
+          </div>
         </div>
         <h1 className="text-2xl font-bold text-ink mb-1">Register your school</h1>
         <p className="text-sm text-muted mb-6">
@@ -96,22 +100,7 @@ export default function RegisterSchool() {
           </Field>
         </div>
 
-        <div className="mt-5 rounded-lg border border-border bg-bg p-3">
-          <label className="flex items-start gap-3 text-sm text-ink cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.terms_accepted}
-              onChange={(e) => setForm((f) => ({ ...f, terms_accepted: e.target.checked, privacy_acknowledged: e.target.checked }))}
-              className="mt-1 accent-primary"
-            />
-            <span>
-              I agree to the <Link to="/terms" target="_blank" className="text-primary hover:underline font-medium">Terms of Service</Link>
-              {' '}and confirm that I have read the <Link to="/privacy" target="_blank" className="text-primary hover:underline font-medium">Privacy Policy</Link>.
-            </span>
-          </label>
-        </div>
-
-        <Button type="submit" className="w-full mt-2" disabled={submitting || !form.terms_accepted}>
+        <Button type="submit" className="w-full mt-2" disabled={submitting}>
           {submitting ? 'Setting up your school…' : 'Register your school'}
         </Button>
 

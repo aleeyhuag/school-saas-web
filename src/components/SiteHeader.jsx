@@ -6,9 +6,11 @@ export default function SiteHeader() {
     <header className="border-b border-border bg-surface sticky top-0 z-10">
       <div className="max-w-6xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-display font-bold text-sm">
-            {BRAND.productName.charAt(0)}
-          </div>
+          <img
+            src={BRAND.logoPath}
+            alt={`${BRAND.productName} logo`}
+            className="w-9 h-9 object-contain"
+          />
           <span className="font-display font-bold text-ink">{BRAND.productName}</span>
         </Link>
 

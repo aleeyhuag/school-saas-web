@@ -4,6 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import App from './App';
 import './index.css';
+import { BRAND } from './config/brand';
+
+document.title = `${BRAND.productName} — ${BRAND.tagline}`;
 
 const queryClient = new QueryClient();
 
