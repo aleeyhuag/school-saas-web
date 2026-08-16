@@ -65,14 +65,23 @@ export default function ClassTeacherAttendancePage() {
     mutationFn: (payload) => submitOrQueue('attendance_mark', payload),
     onSuccess: (result) => {
       // A queued (offline) save hasn't actually changed anything on
-      // the server yet — invalidating here would just re-fetch the
-      // old data and could look like the edit was lost. Only refetch
-      // once we know the server actually has it.
-      if (!result.queued) {
+      // the server yet. Neither has a full 'conflict' response — the
+      // request reached the server fine (so `queued` is false) but
+      // the server declined to overwrite every record because it saw
+      // a newer change it didn't know about. Only refetch once we
+      // know the server's data actually moved — 'applied' fully, or
+      // 'partial' for the subset that wasn't in conflict.
+      if (!result.queued && (result.data?.status === 'applied' || result.data?.status === 'partial')) {
         queryClient.invalidateQueries({ queryKey: ['attendance', schoolClassId, date] });
       }
     },
+    onError: (error) => {
+      setSubmitError(error.response?.data?.message
+        ?? Object.values(error.response?.data?.errors ?? {}).flat()[0]
+        ?? 'Could not save attendance. Please try again.');
+    },
   });
+  const [submitError, setSubmitError] = useState(null);
 
   const allMarked = useMemo(
     () => studentsQuery.data?.every((s) => statuses[s.id]),
@@ -81,6 +90,7 @@ export default function ClassTeacherAttendancePage() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    setSubmitError(null);
     saveMutation.mutate({
       term_id: termId,
       school_class_id: schoolClassId,
@@ -125,12 +135,37 @@ export default function ClassTeacherAttendancePage() {
 
       <div className="p-4 md:p-8">
         <Card>
-          {saveMutation.isSuccess && (
-            <p className={`text-sm rounded-lg px-3 py-2 mb-4 ${saveMutation.data?.queued ? 'text-warning bg-warning-soft' : 'text-success bg-success-soft'}`}>
-              {saveMutation.data?.queued
-                ? `You're offline — attendance for ${date} is saved on this device and will sync automatically once you're back online.`
-                : `Attendance saved for ${date}.`}
-            </p>
+          {saveMutation.isSuccess && (() => {
+            const result = saveMutation.data;
+            if (result.queued) {
+              return (
+                <p className="text-sm text-warning bg-warning-soft rounded-lg px-3 py-2 mb-4">
+                  You're offline — attendance for {date} is saved on this device and will sync automatically once you're back online.
+                </p>
+              );
+            }
+            if (result.data?.status === 'conflict') {
+              return (
+                <p className="text-sm text-danger bg-danger-soft rounded-lg px-3 py-2 mb-4">
+                  This wasn't saved — every student's attendance for {date} was already changed elsewhere since you loaded this page. Open the sync status icon in the top bar to review and resolve it.
+                </p>
+              );
+            }
+            if (result.data?.status === 'partial') {
+              return (
+                <p className="text-sm text-warning bg-warning-soft rounded-lg px-3 py-2 mb-4">
+                  Most of {date}'s attendance was saved, but some students' records were already changed elsewhere. Open the sync status icon in the top bar to review those.
+                </p>
+              );
+            }
+            return (
+              <p className="text-sm text-success bg-success-soft rounded-lg px-3 py-2 mb-4">
+                Attendance saved for {date}.
+              </p>
+            );
+          })()}
+          {saveMutation.isError && (
+            <p className="text-sm text-danger bg-danger-soft rounded-lg px-3 py-2 mb-4">{submitError}</p>
           )}
           {existingAttendanceQuery.isFetching ? (
             <p className="text-sm text-muted mb-4">Checking records for {date}…</p>

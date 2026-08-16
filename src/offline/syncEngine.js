@@ -47,6 +47,31 @@ export async function submitOrQueue(type, payload) {
 
   try {
     const { data } = await api.post(endpoint, body);
+
+    // A conflict/partial result reached the server fine — `queued`
+    // stays false — but it wasn't (fully) applied, so it needs the
+    // same "surface it for resolution" treatment a conflict found
+    // during drainQueue() gets. Without this, a conflict discovered
+    // on this direct online path (the common case — most saves happen
+    // while online) would have nowhere to be resolved from.
+    if (data.status === 'conflict' || data.status === 'partial') {
+      await db.put({
+        client_uuid: clientUuid,
+        type,
+        endpoint,
+        payload: body,
+        recorded_at: recordedAt,
+        status: 'conflict',
+        attempts: 0,
+        next_attempt_at: null,
+        error_message: null,
+        conflict_data: data.conflict_data ?? null,
+        server_operation_id: data.id,
+        created_at: Date.now(),
+      });
+      notifyQueueChanged();
+    }
+
     return { queued: false, data, clientUuid };
   } catch (error) {
     if (isNetworkError(error)) {

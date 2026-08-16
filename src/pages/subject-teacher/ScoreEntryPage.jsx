@@ -104,6 +104,7 @@ export default function ScoreEntryPage() {
 
   const { queue: syncQueue } = useSyncQueue();
   const [queuedByStudent, setQueuedByStudent] = useState({});
+  const [conflictStudentIds, setConflictStudentIds] = useState({});
 
   const [savedStudentId, setSavedStudentId] = useState(null);
   const [saveError, setSaveError] = useState(null);
@@ -117,6 +118,20 @@ export default function ScoreEntryPage() {
         return;
       }
 
+      // A 'conflict' response reached the server fine (queued is
+      // false) but wasn't actually written — this student's score was
+      // changed elsewhere since the row was loaded. Don't show "Saved"
+      // for that; it needs resolving from the sync status icon.
+      if (result.data?.status === 'conflict') {
+        setConflictStudentIds((prev) => ({ ...prev, [variables.student_id]: true }));
+        return;
+      }
+
+      setConflictStudentIds((prev) => {
+        const next = { ...prev };
+        delete next[variables.student_id];
+        return next;
+      });
       queryClient.invalidateQueries({ queryKey: ['subject-scores'] });
       setSavedStudentId(variables.student_id);
       setTimeout(() => setSavedStudentId(null), 2000);
@@ -324,6 +339,11 @@ export default function ScoreEntryPage() {
                           {isRowQueued(student.id) && (
                             <span className="text-[10px] text-warning bg-warning-soft px-1.5 py-0.5 rounded-full whitespace-nowrap">
                               Offline — pending sync
+                            </span>
+                          )}
+                          {conflictStudentIds[student.id] && (
+                            <span className="text-[10px] text-danger bg-danger-soft px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                              Not saved — needs review
                             </span>
                           )}
                         </div>
