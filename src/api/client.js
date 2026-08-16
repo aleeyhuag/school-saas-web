@@ -17,6 +17,19 @@ import axios from 'axios';
  */
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
+  // Without this, a genuinely dead connection just hangs forever —
+  // axios's default timeout is 0 (no timeout). This matters
+  // specifically for the offline-sync flow (Stage 52): it only queues
+  // a save locally when it detects a network failure, but
+  // `navigator.onLine` is unreliable in the real world (it often still
+  // reports `true` when there's no actual signal — it mainly detects
+  // "is a network interface present", not "can this reach the
+  // internet"). Without a timeout, a save made while genuinely
+  // disconnected — but where the browser still thinks it's online —
+  // would hang on this request indefinitely instead of failing fast
+  // and falling back to the local queue. 15s is generous for a normal
+  // request but short enough that a dead connection resolves quickly.
+  timeout: 15_000,
 });
 
 api.interceptors.request.use((config) => {
