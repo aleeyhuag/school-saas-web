@@ -6,7 +6,7 @@ import { Field, Input } from '../components/ui/FormFields';
 
 import { BRAND } from '../config/brand';
 export default function Login() {
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const reason = searchParams.get('reason');
@@ -30,6 +30,23 @@ export default function Login() {
 
     try {
       const data = await login({ email, password });
+
+      // admin.skulag.com.ng is Super Admin's dedicated, exclusive
+      // entry point — anyone else authenticating successfully here
+      // still gets logged straight back out, rather than landing on
+      // their normal dashboard. This is a convenience/access boundary,
+      // not the actual security boundary — every protected route still
+      // enforces its own role check server-side regardless of which
+      // hostname the request came from, so this can't be bypassed by
+      // hitting the API directly. It just keeps this address from
+      // quietly working as an alternate login for every role.
+      const isSuperAdminOnlyDomain = window.location.hostname.startsWith('admin.');
+      if (isSuperAdminOnlyDomain && !data.roles?.includes('super_admin')) {
+        await logout();
+        setError('This portal is for platform administrators only. Please use the main site to sign in.');
+        return;
+      }
+
       // A Proprietor locked out for a billing reason CAN still log
       // in (see LoginController's exception) — but almost every
       // other route will 403 for them, so send them straight to

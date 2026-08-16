@@ -47,7 +47,9 @@ export default function OfflineIndicator() {
         aria-label="Offline sync status"
       >
         <span className={`w-2 h-2 rounded-full shrink-0 ${dotColor}`} />
-        <span className="hidden sm:inline">{isOnline ? (waitingTotal > 0 ? 'Syncing' : 'Online') : 'Offline'}</span>
+        <span className={!isOnline || waitingTotal > 0 ? 'inline' : 'hidden sm:inline'}>
+          {isOnline ? (waitingTotal > 0 ? 'Syncing' : 'Online') : 'Offline'}
+        </span>
         {waitingTotal > 0 && (
           <span className="min-w-[16px] h-4 px-1 rounded-full bg-ink/80 text-white text-[10px] font-semibold flex items-center justify-center">
             {waitingTotal > 9 ? '9+' : waitingTotal}

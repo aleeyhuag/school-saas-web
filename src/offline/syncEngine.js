@@ -13,6 +13,14 @@ const ENDPOINTS = {
   score_save: '/sync/scores',
 };
 
+// Attendance/score saves are small, latency-sensitive writes — a
+// person is sitting there watching the Save button. 8s is enough for
+// a genuinely slow-but-working connection, but short enough that a
+// dead connection gets detected and queued quickly instead of the
+// button just sitting on "Saving..." for the client's full default
+// timeout before anything visible happens.
+const SAVE_REQUEST_TIMEOUT_MS = 8_000;
+
 function newUuid() {
   // crypto.randomUUID() is available in every browser this app targets
   // (all evergreen browsers, iOS 15.4+/Android since ~2021).
@@ -46,7 +54,7 @@ export async function submitOrQueue(type, payload) {
   }
 
   try {
-    const { data } = await api.post(endpoint, body);
+    const { data } = await api.post(endpoint, body, { timeout: SAVE_REQUEST_TIMEOUT_MS });
 
     // A conflict/partial result reached the server fine — `queued`
     // stays false — but it wasn't (fully) applied, so it needs the
