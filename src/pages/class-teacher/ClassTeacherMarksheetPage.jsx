@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as myAssignmentsApi from '../../api/myAssignments';
 import * as academicApi from '../../api/academic';
 import * as scoresApi from '../../api/scores';
 import * as resultsApi from '../../api/results';
 import * as sessionsApi from '../../api/sessions';
-import * as reportsApi from '../../api/reports';
-import { readBlobError } from '../../utils/download';
+import * as exportsApi from '../../api/exports';
+import { useExportPolling } from '../../hooks/useExportPolling';
 import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -95,17 +95,26 @@ export default function ClassTeacherMarksheetPage() {
     },
   });
 
-  const [isExportingPdfs, setIsExportingPdfs] = useState(false);
+  const bulkExport = useExportPolling(() => exportsApi.requestReportCardBulk(schoolClassId, termId));
 
-  async function handleBulkDownload() {
-    setIsExportingPdfs(true);
-    setActionMessage(null);
-    try {
-      await reportsApi.downloadClassReportCards(schoolClassId, termId);
-    } catch (err) {
-      setActionMessage({ tone: 'danger', text: await readBlobError(err) });
-    } finally {
-      setIsExportingPdfs(false);
+  useEffect(() => {
+    if (bulkExport.status === 'completed') {
+      bulkExport.openDownload();
+      bulkExport.reset();
+    }
+    if (bulkExport.status === 'failed') {
+      setActionMessage({ tone: 'danger', text: bulkExport.errorMessage ?? 'Could not build the report card bundle.' });
+      bulkExport.reset();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bulkExport.status]);
+
+  function bulkDownloadLabel() {
+    switch (bulkExport.status) {
+      case 'requesting': return 'Requesting…';
+      case 'queued': return 'Queued…';
+      case 'processing': return 'Building ZIP…';
+      default: return '↓ All Report Cards (PDF)';
     }
   }
 
@@ -146,10 +155,10 @@ export default function ClassTeacherMarksheetPage() {
             )}
             <Button
               variant="secondary"
-              onClick={handleBulkDownload}
-              disabled={isExportingPdfs}
+              onClick={() => { setActionMessage(null); bulkExport.request(); }}
+              disabled={bulkExport.isBusy}
             >
-              {isExportingPdfs ? 'Zipping…' : '↓ All Report Cards (PDF)'}
+              {bulkDownloadLabel()}
             </Button>
 
             {isLocked ? (

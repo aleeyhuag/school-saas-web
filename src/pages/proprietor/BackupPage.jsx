@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import * as governanceApi from '../../api/governance';
+import * as exportsApi from '../../api/exports';
+import { useExportPolling } from '../../hooks/useExportPolling';
 import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -22,11 +24,7 @@ export default function BackupPage() {
   const [message, setMessage] = useState(null);
   const [selectedModule, setSelectedModule] = useState('students');
 
-  const backupMutation = useMutation({
-    mutationFn: governanceApi.downloadSchoolBackup,
-    onSuccess: () => setMessage({ type: 'success', text: 'Full backup downloaded successfully. Store it somewhere secure.' }),
-    onError: (error) => setMessage({ type: 'error', text: error.response?.data?.message ?? 'The backup could not be created.' }),
-  });
+  const fullBackup = useExportPolling(exportsApi.requestSchoolBackup);
 
   const moduleMutation = useMutation({
     mutationFn: governanceApi.downloadSchoolModule,
@@ -34,7 +32,18 @@ export default function BackupPage() {
     onError: (error) => setMessage({ type: 'error', text: error.response?.data?.message ?? 'The module export could not be created.' }),
   });
 
-  const busy = backupMutation.isPending || moduleMutation.isPending;
+  const busy = moduleMutation.isPending;
+
+  function backupStatusLabel() {
+    switch (fullBackup.status) {
+      case 'requesting': return 'Requesting backup…';
+      case 'queued': return 'Queued — this can take a few minutes to start.';
+      case 'processing': return 'Building your backup…';
+      case 'completed': return 'Your backup is ready.';
+      case 'failed': return fullBackup.errorMessage ?? 'The backup could not be created.';
+      default: return null;
+    }
+  }
 
   return (
     <>
@@ -46,10 +55,24 @@ export default function BackupPage() {
             <div className="rounded-lg bg-primary-soft border border-border p-4 text-sm text-ink">
               <strong>Security:</strong> passwords, active login tokens, sessions and password-reset tokens are intentionally excluded. The ZIP is a recovery/data archive, not a runnable database dump.
             </div>
-            {message && <p className={`text-sm rounded-lg px-3 py-2 ${message.type === 'success' ? 'text-success bg-success-soft' : 'text-danger bg-danger-soft'}`}>{message.text}</p>}
-            <Button type="button" disabled={busy} onClick={() => { setMessage(null); backupMutation.mutate(); }}>
-              {backupMutation.isPending ? 'Preparing secure backup…' : 'Download full school backup'}
-            </Button>
+            <div className="rounded-lg bg-primary-soft border border-border p-4 text-sm text-ink">
+              This builds in the background rather than while you wait — for a school with a lot of students, a live download risked timing out mid-way. Come back to this page any time and the status below will pick up where it left off; you'll also get a notification when it's ready.
+            </div>
+            {backupStatusLabel() && (
+              <p className={`text-sm rounded-lg px-3 py-2 ${fullBackup.status === 'completed' ? 'text-success bg-success-soft' : fullBackup.status === 'failed' ? 'text-danger bg-danger-soft' : 'text-ink bg-primary-soft'}`}>
+                {backupStatusLabel()}
+              </p>
+            )}
+            {fullBackup.status === 'completed' ? (
+              <div className="flex gap-3">
+                <Button type="button" onClick={fullBackup.openDownload}>Download backup</Button>
+                <Button type="button" variant="secondary" onClick={fullBackup.reset}>Start a new backup</Button>
+              </div>
+            ) : (
+              <Button type="button" disabled={fullBackup.isBusy} onClick={() => fullBackup.request()}>
+                {fullBackup.isBusy ? 'Preparing…' : 'Request full school backup'}
+              </Button>
+            )}
           </div>
         </Card>
 

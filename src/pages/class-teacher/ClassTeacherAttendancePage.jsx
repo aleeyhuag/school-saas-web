@@ -4,6 +4,7 @@ import * as myAssignmentsApi from '../../api/myAssignments';
 import * as academicApi from '../../api/academic';
 import * as attendanceApi from '../../api/attendance';
 import * as sessionsApi from '../../api/sessions';
+import { submitOrQueue } from '../../offline/syncEngine';
 import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -61,9 +62,15 @@ export default function ClassTeacherAttendancePage() {
   }, [studentsQuery.data, existingAttendanceQuery.data]);
 
   const saveMutation = useMutation({
-    mutationFn: attendanceApi.markAttendance,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['attendance', schoolClassId, date] });
+    mutationFn: (payload) => submitOrQueue('attendance_mark', payload),
+    onSuccess: (result) => {
+      // A queued (offline) save hasn't actually changed anything on
+      // the server yet — invalidating here would just re-fetch the
+      // old data and could look like the edit was lost. Only refetch
+      // once we know the server actually has it.
+      if (!result.queued) {
+        queryClient.invalidateQueries({ queryKey: ['attendance', schoolClassId, date] });
+      }
     },
   });
 
@@ -119,8 +126,10 @@ export default function ClassTeacherAttendancePage() {
       <div className="p-4 md:p-8">
         <Card>
           {saveMutation.isSuccess && (
-            <p className="text-sm text-success bg-success-soft rounded-lg px-3 py-2 mb-4">
-              Attendance saved for {date}.
+            <p className={`text-sm rounded-lg px-3 py-2 mb-4 ${saveMutation.data?.queued ? 'text-warning bg-warning-soft' : 'text-success bg-success-soft'}`}>
+              {saveMutation.data?.queued
+                ? `You're offline — attendance for ${date} is saved on this device and will sync automatically once you're back online.`
+                : `Attendance saved for ${date}.`}
             </p>
           )}
           {existingAttendanceQuery.isFetching ? (

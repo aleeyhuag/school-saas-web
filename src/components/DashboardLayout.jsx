@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
+import OfflineIndicator from './OfflineIndicator';
 import BranchSwitcher from './BranchSwitcher';
 import * as announcementsApi from '../api/announcements';
 import { BRAND } from '../config/brand';
@@ -123,7 +124,8 @@ export default function DashboardLayout({ navItems, children }) {
           >
             <span className="text-lg leading-none">☰</span>
           </button>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-1">
+            <OfflineIndicator />
             <NotificationBell />
           </div>
         </div>

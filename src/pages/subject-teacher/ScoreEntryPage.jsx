@@ -5,6 +5,8 @@ import * as academicApi from '../../api/academic';
 import * as scoresApi from '../../api/scores';
 import * as resultsApi from '../../api/results';
 import * as sessionsApi from '../../api/sessions';
+import { submitOrQueue } from '../../offline/syncEngine';
+import { useSyncQueue } from '../../hooks/useSyncQueue';
 import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -100,12 +102,21 @@ export default function ScoreEntryPage() {
     );
   }, [studentsQuery.data, existingScoresQuery.data]);
 
+  const { queue: syncQueue } = useSyncQueue();
+  const [queuedByStudent, setQueuedByStudent] = useState({});
+
   const [savedStudentId, setSavedStudentId] = useState(null);
   const [saveError, setSaveError] = useState(null);
   const saveMutation = useMutation({
-    mutationFn: scoresApi.saveSubjectScore,
-    onSuccess: (data, variables) => {
+    mutationFn: (payload) => submitOrQueue('score_save', payload),
+    onSuccess: (result, variables) => {
       setSaveError(null);
+
+      if (result.queued) {
+        setQueuedByStudent((prev) => ({ ...prev, [variables.student_id]: result.clientUuid }));
+        return;
+      }
+
       queryClient.invalidateQueries({ queryKey: ['subject-scores'] });
       setSavedStudentId(variables.student_id);
       setTimeout(() => setSavedStudentId(null), 2000);
@@ -116,6 +127,15 @@ export default function ScoreEntryPage() {
       setSaveError(firstError || error.response?.data?.message || 'Could not save this score. Please try again.');
     },
   });
+
+  // A row stays flagged "offline — pending sync" only as long as its
+  // queued operation is still actually sitting in the queue. Once the
+  // sync engine drains it (or it's resolved as a conflict — the global
+  // OfflineIndicator handles that part), it naturally drops out here.
+  function isRowQueued(studentId) {
+    const uuid = queuedByStudent[studentId];
+    return !!uuid && syncQueue.some((item) => item.client_uuid === uuid);
+  }
 
   function updateRow(studentId, field, value) {
     setRows((prev) => ({ ...prev, [studentId]: { ...prev[studentId], [field]: value } }));
@@ -293,13 +313,20 @@ export default function ScoreEntryPage() {
                         />
                       </td>
                       <td className="px-3 py-2">
-                        <Button
-                          size="sm"
-                          onClick={() => saveRow(student.id)}
-                          disabled={isLocked || saveMutation.isPending || !termId}
-                        >
-                          {savedStudentId === student.id ? 'Saved ✓' : 'Save'}
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => saveRow(student.id)}
+                            disabled={isLocked || saveMutation.isPending || !termId}
+                          >
+                            {savedStudentId === student.id ? 'Saved ✓' : 'Save'}
+                          </Button>
+                          {isRowQueued(student.id) && (
+                            <span className="text-[10px] text-warning bg-warning-soft px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                              Offline — pending sync
+                            </span>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
