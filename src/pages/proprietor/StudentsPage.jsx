@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as academicApi from '../../api/academic';
+import * as idCardsApi from '../../api/idCards';
 import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -147,6 +148,7 @@ export default function StudentsPage() {
 
   // ---- Family modal (guardians only — login is automatic now) ----
   const [familyModalStudent, setFamilyModalStudent] = useState(null);
+  const [photoModalStudent, setPhotoModalStudent] = useState(null);
 
   // ---- Bulk import ----
   const [bulkImportOpen, setBulkImportOpen] = useState(false);
@@ -202,9 +204,15 @@ export default function StudentsPage() {
       key: 'actions',
       label: '',
       render: (row) => (
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button variant="secondary" size="sm" onClick={() => setFamilyModalStudent(row)}>
             Guardians
+          </Button>
+          <Button variant="secondary" size="sm" onClick={() => setPhotoModalStudent(row)}>
+            {row.photo_url ? 'Photo ✓' : 'Add photo'}
+          </Button>
+          <Button variant="secondary" size="sm" onClick={() => idCardsApi.downloadStudentIdCard(row.id, `${row.admission_number}-id-card.pdf`)}>
+            ID card
           </Button>
           <Button variant="secondary" size="sm" onClick={() => openEditModal(row)}>
             Edit
@@ -397,6 +405,7 @@ export default function StudentsPage() {
       </Modal>
 
       <GuardiansModal student={familyModalStudent} onClose={() => setFamilyModalStudent(null)} />
+      <PhotoModal student={photoModalStudent} onClose={() => setPhotoModalStudent(null)} />
       <BulkImportModal open={bulkImportOpen} onClose={() => setBulkImportOpen(false)} />
 
       <Modal open={!!loginRevealResult} onClose={() => setLoginRevealResult(null)} title="Login created">
@@ -565,6 +574,69 @@ function GuardiansModal({ student, onClose }) {
       >
         {saveGuardiansMutation.isPending ? 'Saving…' : 'Save guardians'}
       </Button>
+    </Modal>
+  );
+}
+
+function PhotoModal({ student, onClose }) {
+  const queryClient = useQueryClient();
+  const [error, setError] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [file, setFile] = useState(null);
+
+  useEffect(() => {
+    setPreview(null);
+    setFile(null);
+    setError(null);
+  }, [student]);
+
+  const uploadMutation = useMutation({
+    mutationFn: () => academicApi.uploadStudentPhoto(student.id, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+      onClose();
+    },
+    onError: (err) => setError(err.response?.data?.errors?.photo?.[0] ?? err.response?.data?.message ?? 'Could not upload this photo.'),
+  });
+
+  function handleFileChange(e) {
+    const selected = e.target.files?.[0];
+    if (!selected) return;
+    setFile(selected);
+    setError(null);
+    setPreview(URL.createObjectURL(selected));
+  }
+
+  if (!student) return null;
+
+  return (
+    <Modal open={!!student} onClose={onClose} title={`Photo — ${student.first_name} ${student.last_name}`}>
+      {error && <p className="text-sm text-danger mb-4">{error}</p>}
+
+      <p className="text-xs text-muted mb-3">
+        Used on this student's ID card. JPEG, PNG, or WebP, up to 2MB — a
+        clear, front-facing photo works best.
+      </p>
+
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-28 h-28 rounded-full overflow-hidden bg-bg border border-border flex items-center justify-center">
+          {preview || student.photo_url ? (
+            <img src={preview ?? student.photo_url} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-xs text-muted">No photo</span>
+          )}
+        </div>
+
+        <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFileChange} className="text-xs" />
+
+        <Button
+          size="sm"
+          disabled={!file || uploadMutation.isPending}
+          onClick={() => uploadMutation.mutate()}
+        >
+          {uploadMutation.isPending ? 'Uploading…' : 'Save photo'}
+        </Button>
+      </div>
     </Modal>
   );
 }

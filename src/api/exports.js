@@ -21,6 +21,12 @@ export const requestReportCardBulk = (schoolClassId, termId) =>
     timeout: EXPORT_REQUEST_TIMEOUT_MS,
   }).then((r) => r.data);
 
+export const requestIdCards = (format, schoolClassId = null) =>
+  api.post('/exports/id-cards', {
+    format, // 'zip' | 'print_sheet'
+    school_class_id: schoolClassId, // null = whole school
+  }, { timeout: EXPORT_REQUEST_TIMEOUT_MS }).then((r) => r.data);
+
 export const getExport = (exportId) =>
   api.get(`/exports/${exportId}`).then((r) => r.data);
 

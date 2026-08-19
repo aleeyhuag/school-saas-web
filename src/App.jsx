@@ -45,6 +45,7 @@ import AccountSettingsPage from './pages/shared/AccountSettingsPage';
 import SchoolHealthPage from './pages/shared/SchoolHealthPage';
 import BillingPage from './pages/proprietor/BillingPage';
 import BackupPage from './pages/proprietor/BackupPage';
+import IdCardsPage from './pages/shared/IdCardsPage';
 import PromotionPage from './pages/proprietor/PromotionPage';
 import MyClassPage from './pages/class-teacher/MyClassPage';
 import Contact from './pages/Contact';
@@ -111,6 +112,7 @@ export default function App() {
           <Route path="school-health" element={<SchoolHealthPage />} />
           <Route path="billing" element={<BillingPage />} />
           <Route path="backup" element={<BackupPage />} />
+          <Route path="id-cards" element={<IdCardsPage />} />
           <Route path="audit" element={<AuditLogsPage />} />
         </Route>
 
@@ -137,6 +139,7 @@ export default function App() {
           <Route path="results-export" element={<ResultsExportPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
           <Route path="school-health" element={<SchoolHealthPage />} />
+          <Route path="id-cards" element={<IdCardsPage />} />
           <Route path="audit" element={<AuditLogsPage />} />
         </Route>
 

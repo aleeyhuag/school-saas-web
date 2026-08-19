@@ -29,6 +29,11 @@ export const syncStudentGuardians = (studentId, userIds) =>
   api.post(`/students/${studentId}/guardians`, { user_ids: userIds }).then((r) => r.data);
 export const createStudentLogin = (studentId) =>
   api.post(`/students/${studentId}/create-login`).then((r) => r.data);
+export const uploadStudentPhoto = (studentId, file) => {
+  const formData = new FormData();
+  formData.append('photo', file);
+  return api.post(`/students/${studentId}/photo`, formData).then((r) => r.data);
+};
 
 // Staff
 export const getStaff = (params) => api.get('/staff', { params }).then((r) => r.data);
