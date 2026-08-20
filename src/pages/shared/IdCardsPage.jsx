@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as academicApi from '../../api/academic';
 import * as exportsApi from '../../api/exports';
+import * as schoolApi from '../../api/school';
 import { useExportPolling } from '../../hooks/useExportPolling';
 import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
@@ -20,11 +21,28 @@ import { Select } from '../../components/ui/FormFields';
  * same queued-export flow report cards and backups already use.
  */
 export default function IdCardsPage() {
+  const queryClient = useQueryClient();
   const [scope, setScope] = useState(''); // '' = whole school
   const [format, setFormat] = useState('zip');
+  const [signatureError, setSignatureError] = useState(null);
 
   const classesQuery = useQuery({ queryKey: ['classes'], queryFn: academicApi.getClasses });
+  const schoolQuery = useQuery({ queryKey: ['school-profile'], queryFn: schoolApi.getSchoolProfile });
   const exportFlow = useExportPolling(() => exportsApi.requestIdCards(format, scope || null));
+
+  const signatureMutation = useMutation({
+    mutationFn: schoolApi.uploadPrincipalSignature,
+    onSuccess: () => {
+      setSignatureError(null);
+      queryClient.invalidateQueries({ queryKey: ['school-profile'] });
+    },
+    onError: (err) => setSignatureError(err.response?.data?.errors?.signature?.[0] ?? err.response?.data?.message ?? 'Could not upload this signature.'),
+  });
+
+  function handleSignatureChange(e) {
+    const file = e.target.files?.[0];
+    if (file) signatureMutation.mutate(file);
+  }
 
   function statusMessage() {
     switch (exportFlow.status) {
@@ -94,9 +112,33 @@ export default function IdCardsPage() {
           </div>
         </Card>
 
+        <Card title="Principal's signature">
+          <div className="space-y-3">
+            <p className="text-sm text-muted">
+              Printed on the front of every card. If none is uploaded, cards
+              print with a blank line for a signature to be added by hand
+              instead.
+            </p>
+            {signatureError && <p className="text-sm text-danger">{signatureError}</p>}
+            <div className="flex items-center gap-4">
+              <div className="w-32 h-14 rounded-lg border border-border bg-bg flex items-center justify-center overflow-hidden">
+                {schoolQuery.data?.principal_signature_url ? (
+                  <img src={schoolQuery.data.principal_signature_url} alt="" className="max-w-full max-h-full object-contain" />
+                ) : (
+                  <span className="text-xs text-muted">No signature yet</span>
+                )}
+              </div>
+              <div>
+                <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleSignatureChange} className="text-xs" />
+                <p className="text-xs text-muted mt-1">JPEG, PNG, or WebP, up to 1MB. A scan or photo on a plain background works best.</p>
+              </div>
+            </div>
+          </div>
+        </Card>
+
         <Card title="How the QR code works">
           <p className="text-sm text-muted">
-            Each card has a QR code that anyone can scan — no app or login
+            Every card's back has a QR code anyone can scan — no app or login
             needed — to confirm the card is genuine. It shows only the
             student's name, photo, class, and school; nothing else is
             attached to the code itself.

@@ -14,3 +14,10 @@ export const updateSchoolProfile = (fields, logoFile) => {
   if (logoFile) formData.append('logo', logoFile);
   return api.post('/school-profile', formData).then((r) => r.data);
 };
+
+// Printed on every ID card generated for the school — see IdCardsPage.
+export const uploadPrincipalSignature = (file) => {
+  const formData = new FormData();
+  formData.append('signature', file);
+  return api.post('/school-profile/principal-signature', formData).then((r) => r.data);
+};
