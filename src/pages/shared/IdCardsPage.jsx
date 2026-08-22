@@ -72,7 +72,7 @@ export default function IdCardsPage() {
               <Select value={scope} onChange={(e) => setScope(e.target.value)}>
                 <option value="">Whole school</option>
                 {(classesQuery.data ?? []).map((c) => (
-                  <option key={c.id} value={c.id}>{c.full_name}</option>
+                  <option key={c.id} value={c.id}>{c.name} {c.arm}</option>
                 ))}
               </Select>
             </div>
