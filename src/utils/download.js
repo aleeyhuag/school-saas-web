@@ -41,9 +41,28 @@ export async function readBlobError(err) {
   }
   try {
     const text = await data.text();
-    const parsed = JSON.parse(text);
-    return parsed.message ?? Object.values(parsed.errors ?? {}).flat()[0] ?? 'Something went wrong.';
+    if (!text.trim()) {
+      return err.response?.status
+        ? `The server returned an error (HTTP ${err.response.status}). Please try again.`
+        : 'Something went wrong.';
+    }
+
+    try {
+      const parsed = JSON.parse(text);
+      return parsed.message
+        ?? Object.values(parsed.errors ?? {}).flat()[0]
+        ?? (err.response?.status ? `The server returned an error (HTTP ${err.response.status}). Please try again.` : 'Something went wrong.');
+    } catch {
+      // Some production proxies/framework errors arrive as HTML or plain
+      // text instead of JSON. Never dump the HTML to the user; do expose
+      // the HTTP status so "Something went wrong" is no longer a dead end.
+      return err.response?.status
+        ? `The server returned an error (HTTP ${err.response.status}) while generating the file. Please try again.`
+        : 'Something went wrong.';
+    }
   } catch {
-    return 'Something went wrong.';
+    return err.response?.status
+      ? `The server returned an error (HTTP ${err.response.status}). Please try again.`
+      : 'Something went wrong.';
   }
 }

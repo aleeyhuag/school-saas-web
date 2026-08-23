@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import * as branchesApi from '../api/branches';
 import { useAuth } from '../context/AuthContext';
+import { BRAND } from '../config/brand';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
 import { Field, Input } from './ui/FormFields';
@@ -67,7 +68,7 @@ export default function BranchSwitcher() {
         >
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-display font-bold text-sm overflow-hidden shrink-0">
             {school?.logo_url ? (
-              <img src={school.logo_url} alt="" className="w-full h-full object-cover" />
+              <img src={school.logo_url} alt="" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = BRAND.faviconPath; }} />
             ) : (
               school?.name?.[0] ?? 'S'
             )}
