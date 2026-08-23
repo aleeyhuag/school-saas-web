@@ -4,7 +4,6 @@ import * as attendanceApi from '../api/attendance';
 import * as resultsApi from '../api/results';
 import * as feesApi from '../api/fees';
 import * as reportsApi from '../api/reports';
-import { readBlobError } from '../utils/download';
 import Card from './ui/Card';
 import Badge from './ui/Badge';
 
@@ -40,17 +39,16 @@ export default function ChildOverview({ studentId, termId }) {
   });
 
   const [downloadState, setDownloadState] = useState('idle'); // idle | downloading | error
-  const [downloadError, setDownloadError] = useState(null);
 
   async function handleDownload() {
     setDownloadState('downloading');
-    setDownloadError(null);
     try {
       await reportsApi.downloadReportCard(studentId, termId);
       setDownloadState('idle');
     } catch (err) {
       setDownloadState('error');
-      setDownloadError(await readBlobError(err));
+      setTimeout(() => setDownloadState('idle'), 4000);
+      console.error('Report card download failed:', err);
     }
   }
 
@@ -109,7 +107,7 @@ export default function ChildOverview({ studentId, termId }) {
               {downloadState === 'downloading' ? 'Preparing PDF…' : '↓ Download Report Card (PDF)'}
             </button>
             {downloadState === 'error' && (
-              <p className="text-xs text-danger mt-1">{downloadError}</p>
+              <p className="text-xs text-danger mt-1">Could not start the report card download. Please try again.</p>
             )}
           </>
         ) : (
