@@ -139,6 +139,13 @@ export default function App() {
           <Route path="results-export" element={<ResultsExportPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
           <Route path="school-health" element={<SchoolHealthPage />} />
+          {/* Stage 55 hotfix — was missing entirely. A Principal on a
+              trial/subscription-locked school could log in (per the
+              backend carve-out in LoginController) but had nowhere to
+              land, since /principal/billing didn't exist as a route.
+              Reuses the exact same BillingPage component as Proprietor
+              — the API underneath is already role-agnostic. */}
+          <Route path="billing" element={<BillingPage />} />
           <Route path="id-cards" element={<IdCardsPage />} />
           <Route path="audit" element={<AuditLogsPage />} />
         </Route>

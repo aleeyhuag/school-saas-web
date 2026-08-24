@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { to: '/principal/results-export', label: 'Results Export', icon: '⬇' },
   { to: '/principal/announcements', label: 'Announcements', icon: '📣' },
   { to: '/principal/school-health', label: 'School Health', icon: '♡' },
+  { to: '/principal/billing', label: 'Billing', icon: '💳' },
   { to: '/principal/id-cards', label: 'ID Cards', icon: '🪪' },
   { to: '/principal/audit', label: 'Audit Log', icon: '◌' },
   { to: '/principal/settings', label: 'Settings', icon: '⚙' },
