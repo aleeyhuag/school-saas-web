@@ -211,6 +211,9 @@ export default function StudentsPage() {
           <Button variant="secondary" size="sm" onClick={() => setPhotoModalStudent(row)}>
             {row.photo_url ? 'Photo ✓' : 'Add photo'}
           </Button>
+          <Button variant="secondary" size="sm" onClick={() => idCardsApi.previewStudentIdCard(row.id)}>
+            Preview card
+          </Button>
           <Button variant="secondary" size="sm" onClick={() => idCardsApi.downloadStudentIdCard(row.id)}>
             ID card
           </Button>
