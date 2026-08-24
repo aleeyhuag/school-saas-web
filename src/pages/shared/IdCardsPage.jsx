@@ -12,6 +12,7 @@ export default function IdCardsPage() {
   const navigate = useNavigate();
   const [scope, setScope] = useState('');
   const [search, setSearch] = useState('');
+  const [selectedIds, setSelectedIds] = useState([]);
   const classesQuery = useQuery({ queryKey: ['classes'], queryFn: academicApi.getClasses });
   const studentsQuery = useQuery({
     queryKey: ['id-card-students', scope, search],
@@ -20,7 +21,28 @@ export default function IdCardsPage() {
   const schoolQuery = useQuery({ queryKey: ['school-profile'], queryFn: schoolApi.getSchoolProfile });
 
   const students = studentsQuery.data ?? [];
+  const activeStudents = students.filter((student) => student.status === 'active');
   const studentName = (student) => [student.first_name, student.last_name].filter(Boolean).join(' ').trim() || 'Unnamed student';
+
+  const allShownSelected = activeStudents.length > 0 && activeStudents.every((s) => selectedIds.includes(s.id));
+
+  function toggleOne(id) {
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  }
+
+  function toggleAllShown() {
+    if (allShownSelected) {
+      const shownIds = new Set(activeStudents.map((s) => s.id));
+      setSelectedIds((prev) => prev.filter((id) => !shownIds.has(id)));
+    } else {
+      setSelectedIds((prev) => Array.from(new Set([...prev, ...activeStudents.map((s) => s.id)])));
+    }
+  }
+
+  function printSelected() {
+    if (selectedIds.length === 0) return;
+    navigate(`bulk-print?ids=${selectedIds.join(',')}`);
+  }
 
   return (
     <>
@@ -48,20 +70,42 @@ export default function IdCardsPage() {
         <Card title="Students">
           {studentsQuery.isLoading ? <p className="text-sm text-muted">Loading students…</p> : null}
           {studentsQuery.isError ? <p className="text-sm text-danger">Could not load students.</p> : null}
-          {!studentsQuery.isLoading && students.length === 0 ? <p className="text-sm text-muted">No students found.</p> : null}
-          {students.length > 0 && (
-            <div className="divide-y divide-border">
-              {students.filter((student) => student.status === 'active').map((student) => (
-                <div key={student.id} className="py-3 flex items-center justify-between gap-4">
-                  <div className="min-w-0">
-                    <div className="font-medium truncate">{studentName(student)}</div>
-                    <div className="text-xs text-muted">{student.admission_number} · {student.schoolClass?.full_name ?? '—'}{student.photo_url ? ' · Photo ✓' : ' · No photo'}</div>
+          {!studentsQuery.isLoading && activeStudents.length === 0 ? <p className="text-sm text-muted">No students found.</p> : null}
+          {activeStudents.length > 0 && (
+            <>
+              <div className="flex items-center justify-between gap-4 pb-3 border-b border-border mb-1">
+                <label className="flex items-center gap-2 text-sm text-muted cursor-pointer">
+                  <input type="checkbox" checked={allShownSelected} onChange={toggleAllShown} />
+                  Select all shown ({activeStudents.length})
+                </label>
+                <Button type="button" size="sm" disabled={selectedIds.length === 0} onClick={printSelected}>
+                  Print Selected ({selectedIds.length})
+                </Button>
+              </div>
+              <div className="divide-y divide-border">
+                {activeStudents.map((student) => (
+                  <div key={student.id} className="py-3 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(student.id)}
+                        onChange={() => toggleOne(student.id)}
+                      />
+                      <div className="min-w-0">
+                        <div className="font-medium truncate">{studentName(student)}</div>
+                        <div className="text-xs text-muted">{student.admission_number} · {student.schoolClass?.full_name ?? '—'}{student.photo_url ? ' · Photo ✓' : ' · No photo'}</div>
+                      </div>
+                    </div>
+                    <Button type="button" variant="secondary" size="sm" onClick={() => navigate(`preview/${student.id}`)}>Preview & Print</Button>
                   </div>
-                  <Button type="button" variant="secondary" size="sm" onClick={() => navigate(`preview/${student.id}`)}>Preview & Print</Button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
+        </Card>
+
+        <Card title="Bulk printing">
+          <p className="text-sm text-muted">Select a class from the dropdown above to filter the list to one class, use <strong>Select all shown</strong>, then <strong>Print Selected</strong> to print the whole class's ID cards (front and back) in a single browser print job — no need to open each student individually.</p>
         </Card>
 
         <Card title="Printing">

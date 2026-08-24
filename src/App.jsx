@@ -47,6 +47,7 @@ import BillingPage from './pages/proprietor/BillingPage';
 import BackupPage from './pages/proprietor/BackupPage';
 import IdCardsPage from './pages/shared/IdCardsPage';
 import IdCardPreviewPage from './pages/shared/IdCardPreviewPage';
+import IdCardBulkPrintPage from './pages/shared/IdCardBulkPrintPage';
 import PromotionPage from './pages/proprietor/PromotionPage';
 import MyClassPage from './pages/class-teacher/MyClassPage';
 import Contact from './pages/Contact';
@@ -115,6 +116,7 @@ export default function App() {
           <Route path="backup" element={<BackupPage />} />
           <Route path="id-cards" element={<IdCardsPage />} />
           <Route path="id-cards/:studentId/preview" element={<IdCardPreviewPage />} />
+          <Route path="id-cards/bulk-print" element={<IdCardBulkPrintPage />} />
           <Route path="audit" element={<AuditLogsPage />} />
         </Route>
 
@@ -143,6 +145,7 @@ export default function App() {
           <Route path="school-health" element={<SchoolHealthPage />} />
           <Route path="id-cards" element={<IdCardsPage />} />
           <Route path="id-cards/:studentId/preview" element={<IdCardPreviewPage />} />
+          <Route path="id-cards/bulk-print" element={<IdCardBulkPrintPage />} />
           <Route path="audit" element={<AuditLogsPage />} />
         </Route>
 

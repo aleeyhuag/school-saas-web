@@ -27,8 +27,8 @@
 .front-logo { width:28pt; height:28pt; object-fit:contain; }
 .front-logo-placeholder { width:26pt; height:26pt; border:1pt solid var(--green); border-radius:50%; color:var(--green); font-size:10pt; font-weight:bold; line-height:26pt; text-align:center; }
 .front-school-name { top:3pt; left:40pt; width:196pt; height:11pt; color:var(--green); font-size:9.6pt; line-height:11pt; font-weight:bold; letter-spacing:.2pt; text-transform:uppercase; white-space:nowrap; }
-.front-header-address { top:15pt; left:40pt; width:136pt; height:8pt; color:#555; font-size:4.8pt; line-height:8pt; text-align:left; white-space:nowrap; }
-.front-header-phone { top:15pt; left:40pt; width:54pt; height:8pt; color:#555; font-size:4.8pt; line-height:8pt; text-align:left; white-space:nowrap; }
+.front-header-address { top:15pt; left:40pt; width:104pt; height:8pt; color:#555; font-size:4.8pt; line-height:8pt; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.front-header-phone { top:15pt; left:150pt; width:86pt; height:8pt; color:#555; font-size:4.8pt; line-height:8pt; text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .front-photo-frame { top:40pt; left:8pt; width:60pt; height:62pt; border:1pt solid #ccc; border-radius:5pt; background:#f4f6f5; text-align:center; }
 .front-photo { width:60pt; height:62pt; object-fit:cover; border-radius:4pt; }
 .front-photo-placeholder { width:100%; color:#a1aaa6; font-size:6pt; line-height:62pt; text-align:center; }
