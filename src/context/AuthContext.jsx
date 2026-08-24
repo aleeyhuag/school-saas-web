@@ -19,6 +19,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [school, setSchool] = useState(null);
   const [roles, setRoles] = useState([]);
+  const [billingLocked, setBillingLocked] = useState(false);
   // Only ever non-empty for a Proprietor with more than one branch —
   // every other role just has their single `school` above.
   const [accessibleSchools, setAccessibleSchools] = useState([]);
@@ -40,6 +41,7 @@ export function AuthProvider({ children }) {
         setUser(data.user);
         setSchool(data.school);
         setRoles(data.roles ?? []);
+        setBillingLocked(Boolean(data.billing_locked));
         setAccessibleSchools(data.accessible_schools ?? []);
       })
       .catch(() => {
@@ -54,6 +56,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem('token', data.token);
     setUser(data.user);
     setRoles(data.roles ?? []);
+    setBillingLocked(Boolean(data.billing_locked));
     // /auth/login doesn't return `school` directly (only /auth/me does)
     // — fetch it once so context is fully populated right after login.
     const me = await authApi.fetchCurrentUser();
@@ -74,6 +77,7 @@ export function AuthProvider({ children }) {
     setUser(me.user);
     setSchool(me.school);
     setRoles(me.roles ?? []);
+    setBillingLocked(Boolean(me.billing_locked));
     setAccessibleSchools(me.accessible_schools ?? []);
   }
 
@@ -88,6 +92,7 @@ export function AuthProvider({ children }) {
     setUser(me.user);
     setRoles(me.roles ?? []);
     setSchool(me.school);
+    setBillingLocked(Boolean(me.billing_locked));
     setAccessibleSchools(me.accessible_schools ?? []);
   }
 
@@ -96,6 +101,7 @@ export function AuthProvider({ children }) {
     setUser(me.user);
     setRoles(me.roles ?? []);
     setSchool(me.school);
+    setBillingLocked(Boolean(me.billing_locked));
     setAccessibleSchools(me.accessible_schools ?? []);
     return me;
   }
@@ -113,6 +119,7 @@ export function AuthProvider({ children }) {
     setUser(data.user);
     setSchool(data.school);
     setRoles(data.roles ?? []);
+    setBillingLocked(false);
     queryClient.clear();
     window.location.href = '/';
   }
@@ -125,6 +132,7 @@ export function AuthProvider({ children }) {
       setUser(null);
       setSchool(null);
       setRoles([]);
+      setBillingLocked(false);
       setAccessibleSchools([]);
       // Critical: wipe every cached query. Without this, the NEXT
       // person to log in on this browser (a different role, a
@@ -143,7 +151,7 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        user, school, roles, accessibleSchools, loading,
+        user, school, roles, accessibleSchools, billingLocked, loading,
         login, logout, hydrateFromToken, switchBranch, refreshAccessibleSchools, hasRole,
         isAuthenticated: !!user,
       }}

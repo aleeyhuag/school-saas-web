@@ -23,10 +23,14 @@ const ROLE_HOME_ROUTES = {
 };
 
 export default function DashboardRedirect() {
-  const { roles, loading } = useAuth();
+  const { roles, billingLocked, hasRole, loading } = useAuth();
 
   if (loading) {
     return <div className="flex items-center justify-center h-screen text-gray-500">Loading…</div>;
+  }
+
+  if (billingLocked) {
+    return <Navigate to={hasRole('principal') ? '/principal/billing' : '/proprietor/billing'} replace />;
   }
 
   const targetRoute = Object.keys(ROLE_HOME_ROUTES)

@@ -47,13 +47,10 @@ export default function Login() {
         return;
       }
 
-      // A Proprietor or Principal locked out for a billing reason CAN
-      // still log in (see LoginController's exception, extended to
-      // Principal in the Stage 55 hotfix) — but almost every other
-      // route will 403 for them, so send them straight to Billing
-      // instead of a dashboard that won't load. /proprietor/billing is
-      // role-gated by ProtectedRoute, so a Principal must land on
-      // /principal/billing specifically or they'd just bounce back to "/".
+      // A Proprietor locked out for a billing reason CAN still log
+      // in (see LoginController's exception) — but almost every
+      // other route will 403 for them, so send them straight to
+      // Billing instead of a dashboard that won't load.
       if (data.billing_locked) {
         const billingPath = data.roles?.includes('principal') ? '/principal/billing' : '/proprietor/billing';
         navigate(billingPath);

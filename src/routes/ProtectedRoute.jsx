@@ -1,28 +1,15 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 /**
- * Wraps a single page. Usage:
- *
- *   <Route path="/dashboard" element={
- *     <ProtectedRoute><Dashboard /></ProtectedRoute>
- *   } />
- *
- * Or restrict to specific roles:
- *
- *   <Route path="/admin" element={
- *     <ProtectedRoute allowedRoles={['proprietor', 'principal']}>
- *       <AdminDashboard />
- *     </ProtectedRoute>
- *   } />
- *
- * If the user isn't logged in, they're sent to /login. If they ARE
- * logged in but don't have an allowed role, they're sent to /
- * (which redirects them to whatever dashboard actually matches their
- * role — see App.jsx).
+ * Role gate plus the frontend half of the Stage 55 billing lock.
+ * The API is the real security boundary; this redirect prevents a locked
+ * Proprietor/Principal from manually navigating around the Billing page in
+ * the SPA and then seeing a dashboard shell full of guaranteed 403s.
  */
 export default function ProtectedRoute({ allowedRoles, children }) {
-  const { isAuthenticated, hasRole, loading } = useAuth();
+  const { isAuthenticated, hasRole, billingLocked, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return <div className="flex items-center justify-center h-screen text-gray-500">Loading…</div>;
@@ -34,6 +21,13 @@ export default function ProtectedRoute({ allowedRoles, children }) {
 
   if (allowedRoles && !hasRole(allowedRoles)) {
     return <Navigate to="/" replace />;
+  }
+
+  if (billingLocked) {
+    const billingPath = hasRole('principal') ? '/principal/billing' : '/proprietor/billing';
+    if (location.pathname !== billingPath) {
+      return <Navigate to={billingPath} replace />;
+    }
   }
 
   return children;
