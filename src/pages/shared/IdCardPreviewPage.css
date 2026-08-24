@@ -1,0 +1,82 @@
+/* Browser ID-card renderer. Physical card size: CR80 / 85.6mm × 54mm. */
+.id-card-browser {
+    --card-width: 242.65pt;
+    --card-height: 153.07pt;
+    --green: #1F5C4A;
+    --ink: #1a1a1a;
+    --muted: #555;
+    font-family: 'DejaVu Sans', Arial, sans-serif;
+    color: var(--ink);
+}
+.id-card-browser *, .id-card-browser *::before, .id-card-browser *::after { box-sizing: border-box; }
+.id-card-preview-page { min-height: 100%; background: #eef2f0; padding: 28px; }
+.id-card-preview-toolbar { max-width: 980px; margin: 0 auto 24px; padding: 16px 18px; background: #fff; border: 1px solid #d8dfdc; border-radius: 10px; }
+.id-card-preview-toolbar h1 { margin: 0 0 5px; font-size: 18px; color: var(--green); }
+.id-card-preview-toolbar p { margin: 0; font-size: 13px; color: #52605a; }
+.id-card-preview-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; align-items:center; }
+.id-card-preview-stage { display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:42px; max-width:1000px; margin:0 auto; }
+.id-card-preview-side { display:flex; flex-direction:column; gap:10px; align-items:center; }
+.id-card-preview-label { font:700 13px/1.2 Arial,sans-serif; color:#52605a; letter-spacing:.08em; text-transform:uppercase; }
+.id-card-preview-card { width:var(--card-width); height:var(--card-height); position:relative; flex:0 0 auto; background:#fff; border-radius:10pt; box-shadow:0 10px 28px rgba(0,0,0,.13); }
+.id-card-inner { position:relative; width:var(--card-width); height:var(--card-height); border:1.1pt solid var(--green); border-radius:10pt; background:#fff; overflow:hidden; }
+.abs { position:absolute; overflow:hidden; }
+
+/* FRONT */
+.front-header { top:0; left:0; width:100%; height:34pt; background:#fff; border-bottom:2pt solid var(--green); }
+.front-logo-wrap { top:3pt; left:6pt; width:28pt; height:28pt; text-align:center; }
+.front-logo { width:28pt; height:28pt; object-fit:contain; }
+.front-logo-placeholder { width:26pt; height:26pt; border:1pt solid var(--green); border-radius:50%; color:var(--green); font-size:10pt; font-weight:bold; line-height:26pt; text-align:center; }
+.front-school-name { top:3pt; left:40pt; width:196pt; height:11pt; color:var(--green); font-size:9.6pt; line-height:11pt; font-weight:bold; letter-spacing:.2pt; text-transform:uppercase; white-space:nowrap; }
+.front-header-address { top:15pt; left:40pt; width:136pt; height:8pt; color:#555; font-size:4.8pt; line-height:8pt; text-align:left; white-space:nowrap; }
+.front-header-phone { top:15pt; left:40pt; width:54pt; height:8pt; color:#555; font-size:4.8pt; line-height:8pt; text-align:left; white-space:nowrap; }
+.front-photo-frame { top:40pt; left:8pt; width:60pt; height:62pt; border:1pt solid #ccc; border-radius:5pt; background:#f4f6f5; text-align:center; }
+.front-photo { width:60pt; height:62pt; object-fit:cover; border-radius:4pt; }
+.front-photo-placeholder { width:100%; color:#a1aaa6; font-size:6pt; line-height:62pt; text-align:center; }
+.front-name { top:41pt; left:74pt; width:162pt; height:12pt; color:#1a1a1a; font-size:9.2pt; line-height:11pt; font-weight:bold; text-transform:uppercase; white-space:nowrap; }
+.front-name-rule { top:55pt; left:74pt; width:46pt; height:1pt; border-top:.8pt solid #ccc; }
+.front-role { top:58pt; left:74pt; width:162pt; height:7pt; color:#555; font-size:5.4pt; line-height:7pt; font-weight:bold; letter-spacing:1pt; text-transform:uppercase; }
+.front-fact-label { left:74pt; width:40pt; height:7pt; color:#666; font-size:5.8pt; line-height:7pt; font-weight:bold; text-transform:uppercase; white-space:nowrap; }
+.front-fact-value { left:116pt; width:122pt; height:7pt; color:#1a1a1a; font-size:5.8pt; line-height:7pt; white-space:nowrap; }
+.front-session { top:105pt; left:74pt; width:80pt; height:12pt; box-sizing:border-box; background:#eaf2ef; border:.75pt solid var(--green); color:var(--green); font-size:5.6pt; line-height:12pt; font-weight:bold; padding:0; border-radius:8pt; text-align:center; }
+.front-signature-img { top:100pt; left:160pt; width:66pt; height:15pt; object-fit:contain; }
+.front-signature-line { top:108pt; left:168pt; width:58pt; height:1pt; border-bottom:.7pt solid #999; }
+.front-signature-label { top:111pt; left:160pt; width:66pt; height:6pt; color:#555; font-size:4.8pt; line-height:6pt; font-weight:bold; letter-spacing:.6pt; text-align:center; }
+.front-footer { top:134pt; left:0; width:100%; height:17pt; background:#f5f5f5; border-top:.6pt solid #ddd; color:#555; font-size:4.4pt; line-height:17pt; font-weight:bold; text-align:center; text-transform:uppercase; }
+
+/* BACK */
+.back-header { top:0; left:0; width:100%; height:20pt; background:#fff; border-bottom:2pt solid var(--green); color:var(--green); font-size:8.8pt; line-height:18pt; font-weight:bold; letter-spacing:.4pt; text-align:center; text-transform:uppercase; }
+.back-pledge-title,.back-emergency-title { box-sizing:border-box; display:table; background:#eaf2ef; border:.75pt solid var(--green); color:var(--green); font-size:5pt; line-height:6pt; font-weight:bold; letter-spacing:.3pt; padding:0 6pt; border-radius:6pt; text-transform:uppercase; }
+.back-pledge-title { top:25pt; left:9pt; width:150pt; height:10pt; }
+.back-pledge-title span,.back-emergency-title span { display:table-cell; vertical-align:middle; }
+.back-pledge { top:37pt; left:9pt; width:225pt; height:14pt; font-size:4.8pt; line-height:6.4pt; color:#333; }
+.back-pledge-list { top:52pt; left:9pt; width:225pt; height:24pt; font-size:4.6pt; line-height:6.2pt; color:#333; }
+.back-pledge-list div { margin-bottom:.6pt; }
+.back-emergency-title { top:76pt; left:9pt; width:150pt; height:10pt; }
+.back-emergency-label { left:9pt; width:28pt; height:7pt; color:#666; font-size:5.4pt; line-height:7pt; font-weight:bold; white-space:nowrap; }
+.back-emergency-value { left:39pt; width:120pt; height:7pt; color:#1a1a1a; font-size:5.4pt; line-height:7pt; white-space:nowrap; }
+.back-qr { top:62pt; left:180pt; width:40pt; height:40pt; object-fit:contain; }
+.back-qr-label { top:103pt; left:172pt; width:56pt; height:6pt; color:#777; font-size:4.4pt; line-height:6pt; text-align:center; }
+.back-footer { top:116pt; left:0; width:100%; height:34.07pt; background:#fff; border-top:1pt solid var(--green); }
+.back-sign-cell-l { top:129pt; left:12pt; width:100pt; height:15pt; text-align:center; }
+.back-sign-cell-r { top:128pt; left:130pt; width:100pt; height:15pt; text-align:center; }
+.back-sign-divider { top:120pt; left:121pt; width:1pt; height:13pt; border-left:.6pt solid #ccc; }
+.back-signature-img { width:60pt; height:11pt; object-fit:contain; display:block; margin:0 auto; }
+.back-signature-line { width:66pt; height:1pt; border-bottom:.7pt solid #999; margin:4pt auto 0; }
+.back-signature-label { color:#555; font-size:4.3pt; line-height:6pt; margin-top:1pt; }
+.back-notice { top:143pt; left:0; width:100%; height:5pt; background:#f5f5f5; color:#555; font-size:4pt; line-height:5pt; font-weight:bold; text-align:center; text-transform:uppercase; }
+
+.id-card-print-page { display:none; }
+.id-card-print-page .id-card-inner { box-shadow:none; }
+.id-card-preview-error { max-width:980px; margin:0 auto; background:#fff1f1; color:#8b1e1e; border:1px solid #efcaca; padding:14px; border-radius:8px; }
+.id-card-preview-loading { max-width:980px; margin:0 auto; background:#fff; padding:24px; border-radius:10px; text-align:center; color:#52605a; }
+
+@media print {
+    @page { size: A4 portrait; margin: 0; }
+    html, body, #root { background:#fff !important; }
+    body { margin:0 !important; padding:0 !important; }
+    .id-card-preview-page { background:#fff; padding:0; }
+    .id-card-preview-toolbar, .id-card-preview-stage, .id-card-preview-error, .id-card-preview-loading { display:none !important; }
+    .id-card-print-page { display:block; width:210mm; height:297mm; position:relative; break-after:page; page-break-after:always; }
+    .id-card-print-page:last-child { break-after:auto; page-break-after:auto; }
+    .id-card-print-page .id-card-inner { position:absolute; left:62.2mm; top:121.5mm; box-shadow:none; }
+}

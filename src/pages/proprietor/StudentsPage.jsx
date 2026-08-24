@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as academicApi from '../../api/academic';
-import * as idCardsApi from '../../api/idCards';
 import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -37,6 +37,7 @@ function useDebounced(value, delay = 400) {
 
 export default function StudentsPage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const [classFilter, setClassFilter] = useState('');
   const [searchInput, setSearchInput] = useState('');
@@ -211,10 +212,7 @@ export default function StudentsPage() {
           <Button variant="secondary" size="sm" onClick={() => setPhotoModalStudent(row)}>
             {row.photo_url ? 'Photo ✓' : 'Add photo'}
           </Button>
-          <Button variant="secondary" size="sm" onClick={() => idCardsApi.previewStudentIdCard(row.id)}>
-            Preview card
-          </Button>
-          <Button variant="secondary" size="sm" onClick={() => idCardsApi.downloadStudentIdCard(row.id)}>
+          <Button variant="secondary" size="sm" onClick={() => navigate(`/proprietor/id-cards/${row.id}/preview`)}>
             ID card
           </Button>
           <Button variant="secondary" size="sm" onClick={() => openEditModal(row)}>
