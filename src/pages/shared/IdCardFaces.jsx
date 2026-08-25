@@ -70,11 +70,7 @@ export function CardBack({ card }) {
       <div className="abs back-qr-label">SCAN TO VERIFY</div>
       <div className="abs back-footer" />
       <div className="abs back-sign-cell-l"><div className="back-signature-line" /><div className="back-signature-label">HOLDER'S SIGNATURE</div></div>
-      <div className="abs back-sign-divider" />
-      <div className="abs back-sign-cell-r">
-        {school.principal_signature_url ? <img src={school.principal_signature_url} className="back-signature-img" alt="" /> : <div className="back-signature-line" />}
-        <div className="back-signature-label">PRINCIPAL'S SIGNATURE</div>
-      </div>
+      
       <div className="abs back-notice">This ID card must be presented on demand. Not transferable.</div>
     </div>
   );
