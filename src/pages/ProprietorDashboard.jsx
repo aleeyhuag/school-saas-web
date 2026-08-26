@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { to: '/proprietor/fees', label: 'Fees', icon: '₦' },
   { to: '/proprietor/timetable', label: 'Timetable', icon: '▦' },
   { to: '/proprietor/exam-timetable', label: 'Exam Timetable', icon: '▤' },
+  { to: '/proprietor/cbt', label: 'CBT Exams', icon: '📝' },
   { to: '/proprietor/results-export', label: 'Results Export', icon: '⬇' },
   { to: '/proprietor/announcements', label: 'Announcements', icon: '📣' },
   { to: '/proprietor/school-health', label: 'School Health', icon: '♡' },

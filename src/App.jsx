@@ -48,6 +48,8 @@ import BackupPage from './pages/proprietor/BackupPage';
 import IdCardsPage from './pages/shared/IdCardsPage';
 import IdCardPreviewPage from './pages/shared/IdCardPreviewPage';
 import IdCardBulkPrintPage from './pages/shared/IdCardBulkPrintPage';
+import CbtManagementPage from './pages/shared/CbtManagementPage';
+import StudentCbtPage from './pages/student/StudentCbtPage';
 import PromotionPage from './pages/proprietor/PromotionPage';
 import MyClassPage from './pages/class-teacher/MyClassPage';
 import Contact from './pages/Contact';
@@ -109,6 +111,7 @@ export default function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="timetable" element={<TimetableViewPage />} />
           <Route path="exam-timetable" element={<ExamTimetableViewPage />} />
+          <Route path="cbt" element={<CbtManagementPage />} />
           <Route path="results-export" element={<ResultsExportPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
           <Route path="school-health" element={<SchoolHealthPage />} />
@@ -140,6 +143,7 @@ export default function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="timetable" element={<ClassTimetablePage />} />
           <Route path="exam-timetable" element={<ExamTimetableViewPage />} />
+          <Route path="cbt" element={<CbtManagementPage />} />
           <Route path="results-export" element={<ResultsExportPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
           <Route path="school-health" element={<SchoolHealthPage />} />
@@ -162,6 +166,7 @@ export default function App() {
           <Route path="settings" element={<BursarSettingsPage />} />
           <Route path="timetable" element={<TimetableViewPage />} />
           <Route path="exam-timetable" element={<ExamTimetablePage />} />
+          <Route path="cbt" element={<CbtManagementPage />} />
           <Route path="results-export" element={<ResultsExportPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
         </Route>
@@ -229,6 +234,7 @@ export default function App() {
           <Route path="settings" element={<BursarSettingsPage />} />
           <Route path="timetable" element={<TimetableViewPage />} />
           <Route path="exam-timetable" element={<ExamTimetableViewPage />} />
+          <Route path="cbt" element={<StudentCbtPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
         </Route>
       </Routes>

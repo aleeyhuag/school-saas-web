@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { to: '/principal/fees', label: 'Fees', icon: '₦' },
   { to: '/principal/timetable', label: 'Timetable', icon: '▦' },
   { to: '/principal/exam-timetable', label: 'Exam Timetable', icon: '▤' },
+  { to: '/principal/cbt', label: 'CBT Exams', icon: '📝' },
   { to: '/principal/results-export', label: 'Results Export', icon: '⬇' },
   { to: '/principal/announcements', label: 'Announcements', icon: '📣' },
   { to: '/principal/school-health', label: 'School Health', icon: '♡' },

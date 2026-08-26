@@ -5,6 +5,7 @@ const NAV_ITEMS = [
   { to: '/exam-officer/grading-settings', label: 'Grading Settings', icon: '⚖', end: true },
   { to: '/exam-officer/timetable', label: 'Timetable', icon: '▦' },
   { to: '/exam-officer/exam-timetable', label: 'Exam Timetable', icon: '▤' },
+  { to: '/exam-officer/cbt', label: 'CBT Exams', icon: '📝' },
   { to: '/exam-officer/results-export', label: 'Results Export', icon: '⬇' },
   { to: '/exam-officer/announcements', label: 'Announcements', icon: '📣' },
   { to: '/exam-officer/settings', label: 'Account', icon: '⚙' },
