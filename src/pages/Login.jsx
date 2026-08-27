@@ -16,6 +16,7 @@ export default function Login() {
     disabled: 'Your school has been disabled. Please contact your proprietor or principal.',
   };
   const disabledSchoolMessage = REASON_MESSAGES[reason] ?? null;
+  const isBillingReason = reason === 'trial_expired' || reason === 'subscription_expired';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,10 +58,22 @@ export default function Login() {
         navigate('/');
       }
     } catch (err) {
-      const message =
-        err.response?.data?.errors?.email?.[0] ||
-        err.response?.data?.message ||
-        'Login failed. Please check your credentials.';
+      const status = err.response?.status;
+      const serverMessage = err.response?.data?.errors?.email?.[0] || err.response?.data?.message;
+      let message = serverMessage;
+
+      if (!err.response) {
+        message = err.code === 'ECONNABORTED' || err.code === 'ETIMEDOUT'
+          ? 'Skulag is taking too long to respond. Please check your internet connection and try again.'
+          : 'Unable to connect to Skulag. Please check your internet connection and try again.';
+      } else if (status === 401 || status === 422) {
+        message = serverMessage || 'Incorrect email or password. Please check and try again.';
+      } else if (status >= 500) {
+        message = 'Skulag is temporarily unavailable. Please try again shortly.';
+      } else {
+        message = serverMessage || 'We could not complete your login right now. Please try again.';
+      }
+
       setError(message);
     } finally {
       setSubmitting(false);
@@ -122,12 +135,6 @@ export default function Login() {
         {/* Real forgot-password flow now — see ForgotPassword.jsx */}
         <p className="text-xs text-muted text-center mt-4">
           <Link to="/forgot-password" className="text-primary hover:underline">Forgot your password?</Link>
-        </p>
-        <p className="text-xs text-muted text-center mt-2">
-          Don&apos;t have a school account?{' '}
-          <Link to="/register-school" className="text-primary font-medium hover:underline">
-            Register your school
-          </Link>
         </p>
       </form>
     </div>
