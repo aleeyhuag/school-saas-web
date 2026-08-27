@@ -12,6 +12,27 @@ function formatTime(seconds) {
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 }
 
+function apiErrorMessage(error, fallback = 'We could not complete that CBT action right now. Please try again.') {
+  const data = error?.response?.data;
+  if (typeof data === 'string' && data.trim()) {
+    try {
+      const parsed = JSON.parse(data);
+      if (parsed?.message) return parsed.message;
+    } catch {
+      // Ignore an HTML/text response from a proxy or web server.
+    }
+  }
+  if (data?.message) return data.message;
+  if (data?.error) return typeof data.error === 'string' ? data.error : data.error.message ?? fallback;
+  if (data?.errors) {
+    const first = Object.values(data.errors).flat()[0];
+    if (first) return first;
+  }
+  if (error?.code === 'ECONNABORTED' || !error?.response) return 'Unable to reach Skulag. Please check your internet connection and try again.';
+  if (error?.response?.status >= 500) return 'Skulag could not complete this CBT request right now. Please try again shortly.';
+  return fallback;
+}
+
 export default function StudentCbtPage() {
   const qc = useQueryClient();
   const available = useQuery({ queryKey: ['student-cbt-available'], queryFn: cbtApi.getAvailableCbtExams, refetchInterval: 60_000 });
@@ -23,8 +44,8 @@ export default function StudentCbtPage() {
   const [confirmSubmit, setConfirmSubmit] = useState(false);
   const autoSubmitting = useRef(false);
 
-  const start = useMutation({ mutationFn: cbtApi.startCbtExam, onSuccess: (data) => { setAttempt(data); setCurrent(0); setMessage(''); qc.invalidateQueries({ queryKey: ['student-cbt-available'] }); }, onError: (e) => setMessage(e.response?.data?.message ?? 'Could not start the exam.') });
-  const submit = useMutation({ mutationFn: cbtApi.submitCbtAttempt, onSuccess: (data) => { setAttempt(data); setConfirmSubmit(false); qc.invalidateQueries({ queryKey: ['student-cbt-available'] }); qc.invalidateQueries({ queryKey: ['student-cbt-results'] }); }, onError: (e) => setMessage(e.response?.data?.message ?? (e.code === 'ECONNABORTED' || !e.response ? 'Unable to reach Skulag. Your submission could not be confirmed. Please check your connection and try again.' : 'Could not submit the exam right now. Please try again.')) });
+  const start = useMutation({ mutationFn: cbtApi.startCbtExam, onSuccess: (data) => { setAttempt(data); setCurrent(0); setMessage(''); qc.invalidateQueries({ queryKey: ['student-cbt-available'] }); }, onError: (e) => setMessage(apiErrorMessage(e, 'Could not start the exam.')) });
+  const submit = useMutation({ mutationFn: cbtApi.submitCbtAttempt, onSuccess: (data) => { setAttempt(data); setConfirmSubmit(false); qc.invalidateQueries({ queryKey: ['student-cbt-available'] }); qc.invalidateQueries({ queryKey: ['student-cbt-results'] }); }, onError: (e) => setMessage(apiErrorMessage(e, 'Your submission could not be confirmed. Please try again.')) });
 
   useEffect(() => {
     if (!attempt?.expires_at || attempt.status !== 'in_progress') return undefined;
@@ -39,7 +60,7 @@ export default function StudentCbtPage() {
             qc.invalidateQueries({ queryKey: ['student-cbt-available'] });
             qc.invalidateQueries({ queryKey: ['student-cbt-results'] });
           })
-          .catch((e) => { autoSubmitting.current = false; setMessage(e.response?.data?.message ?? 'The exam could not be submitted automatically.'); });
+          .catch((e) => { autoSubmitting.current = false; setMessage(apiErrorMessage(e, 'The exam could not be submitted automatically. Please try again.')); });
       }
     };
     tick(); const timer = setInterval(tick, 1000); return () => clearInterval(timer);
@@ -51,7 +72,7 @@ export default function StudentCbtPage() {
   async function choose(optionId) {
     if (!attempt || !question || attempt.status !== 'in_progress') return;
     setAttempt((a) => ({ ...a, questions: a.questions.map((q) => q.id === question.id ? { ...q, selected_option_id: optionId } : q) }));
-    try { await cbtApi.saveCbtAnswer(attempt.id, question.id, optionId); } catch (e) { setMessage(e.response?.data?.message ?? 'Answer could not be saved.'); }
+    try { await cbtApi.saveCbtAnswer(attempt.id, question.id, optionId); } catch (e) { setMessage(apiErrorMessage(e, 'Answer could not be saved. Please try again.')); }
   }
 
   if (attempt?.status === 'in_progress') {
