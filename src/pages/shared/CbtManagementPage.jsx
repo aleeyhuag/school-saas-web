@@ -14,6 +14,23 @@ import { Field, Input, Select, Textarea } from '../../components/ui/FormFields';
 const emptyQuestion = { question_text: '', topic: '', marks: 1, options: [{ option_text: '', is_correct: true }, { option_text: '', is_correct: false }, { option_text: '', is_correct: false }, { option_text: '', is_correct: false }] };
 const emptyExam = { term_id: '', subject_id: '', title: '', instructions: '', duration_minutes: 60, starts_at: '', ends_at: '', pass_mark: 50, randomize_questions: false, randomize_options: false, school_class_ids: [] };
 function localDateTime(date = new Date()) { const pad = (n) => String(n).padStart(2, '0'); return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`; }
+// datetime-local is a wall-clock value with no timezone. Send an explicit
+// offset so Laravel (which stores timestamps in UTC) does not reinterpret a
+// Lagos 15:00 as UTC 15:00 and display it back as 16:00.
+function localDateTimeToIso(value) {
+  if (!value) return value;
+  const [datePart, timePart] = value.split('T');
+  if (!datePart || !timePart) return value;
+  const [year, month, day] = datePart.split('-').map(Number);
+  const [hour, minute] = timePart.split(':').map(Number);
+  const local = new Date(year, month - 1, day, hour, minute, 0, 0);
+  const offset = -local.getTimezoneOffset();
+  const sign = offset >= 0 ? '+' : '-';
+  const abs = Math.abs(offset);
+  const hh = String(Math.floor(abs / 60)).padStart(2, '0');
+  const mm = String(abs % 60).padStart(2, '0');
+  return `${datePart}T${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}:00${sign}${hh}:${mm}`;
+}
 
 function QuestionForm({ value, setValue, onSubmit, busy, submitLabel }) {
   return <form onSubmit={onSubmit} className="space-y-1"><Field label="Question"><Textarea required rows={4} value={value.question_text} onChange={(e)=>setValue({...value,question_text:e.target.value})}/></Field><div className="grid sm:grid-cols-2 gap-3"><Field label="Topic"><Input value={value.topic} onChange={(e)=>setValue({...value,topic:e.target.value})}/></Field><Field label="Marks"><Input required type="number" min="0.01" step="0.01" value={value.marks} onChange={(e)=>setValue({...value,marks:e.target.value})}/></Field></div><Field label="Options"><div className="space-y-2">{value.options.map((o,i)=><div key={i} className="flex gap-2 items-center"><input type="radio" name="correct-option" checked={o.is_correct} onChange={()=>setValue({...value,options:value.options.map((x,j)=>({...x,is_correct:i===j}))})}/><Input required value={o.option_text} placeholder={`Option ${String.fromCharCode(65+i)}`} onChange={(e)=>setValue({...value,options:value.options.map((x,j)=>j===i?{...x,option_text:e.target.value}:x)})}/></div>)}</div></Field><p className="text-xs text-muted mb-3">Select the radio button beside the correct answer.</p><Button type="submit" disabled={busy}>{busy ? 'Saving…' : submitLabel}</Button></form>;
@@ -44,7 +61,7 @@ export default function CbtManagementPage() {
   const importBank=useMutation({mutationFn:cbtApi.importBankQuestions,onSuccess:(d)=>{qc.invalidateQueries({queryKey:['cbt-question-bank']});setError(d.message??'Import completed.');},onError:(e)=>setError(e.response?.data?.message??e.response?.data?.errors?.file?.[0]??'Could not import the question bank.')});
   function openCreate(){const start=new Date(Date.now()+10*60*1000);setError('');setEditingExamId(null);setExamForm({...emptyExam,term_id:String(terms.find(t=>t.is_current)?.id??terms[0]?.id??''),starts_at:localDateTime(start),ends_at:localDateTime(new Date(start.getTime()+60*60*1000)),school_class_ids:[]});setExamModal(true)}
   function openEditExam(exam){setError('');setEditingExamId(exam.id);setExamForm({term_id:String(exam.term_id),subject_id:String(exam.subject_id),title:exam.title,instructions:exam.instructions??'',duration_minutes:exam.duration_minutes,starts_at:localDateTime(new Date(exam.starts_at)),ends_at:localDateTime(new Date(exam.ends_at)),pass_mark:exam.pass_mark,randomize_questions:!!exam.randomize_questions,randomize_options:!!exam.randomize_options,school_class_ids:(exam.school_classes??[]).map(c=>c.id)});setExamModal(true)}
-  function submitExam(e){e.preventDefault();const payload={...examForm,term_id:Number(examForm.term_id),subject_id:Number(examForm.subject_id),duration_minutes:Number(examForm.duration_minutes),pass_mark:Number(examForm.pass_mark),school_class_ids:examForm.school_class_ids.map(Number)};if(editingExamId){if(selectedExam?.attempts_count){updateExam.mutate({id:editingExamId,payload:{title:payload.title,instructions:payload.instructions,starts_at:payload.starts_at,ends_at:payload.ends_at}})}else updateExam.mutate({id:editingExamId,payload})}else createExam.mutate(payload)}
+  function submitExam(e){e.preventDefault();const payload={...examForm,term_id:Number(examForm.term_id),subject_id:Number(examForm.subject_id),duration_minutes:Number(examForm.duration_minutes),pass_mark:Number(examForm.pass_mark),school_class_ids:examForm.school_class_ids.map(Number),starts_at:localDateTimeToIso(examForm.starts_at),ends_at:localDateTimeToIso(examForm.ends_at)};if(editingExamId){if(selectedExam?.attempts_count){updateExam.mutate({id:editingExamId,payload:{title:payload.title,instructions:payload.instructions,starts_at:payload.starts_at,ends_at:payload.ends_at}})}else updateExam.mutate({id:editingExamId,payload})}else createExam.mutate(payload)}
   function submitQuestion(e){e.preventDefault();addQuestion.mutate({id:selectedExam.id,payload:{...questionForm,marks:Number(questionForm.marks)}})}
   function openEditQuestion(q){setQuestionForm({question_text:q.question_text,topic:q.topic??'',marks:q.marks,options:(q.options??[]).map(o=>({option_text:o.option_text,is_correct:o.is_correct}))});setQuestionModal(true);setError('');setEditingQuestionId(q.id)}
   const [editingQuestionId,setEditingQuestionId]=useState(null);
