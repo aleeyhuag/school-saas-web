@@ -33,7 +33,6 @@ import ParentChildrenPage from './pages/parent/ParentChildrenPage';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentOverviewPage from './pages/student/StudentOverviewPage';
 import ProtectedRoute from './routes/ProtectedRoute';
-import ComingSoon from './components/ComingSoon';
 import ClassTimetablePage from './pages/principal/ClassTimetablePage';
 import ExamTimetablePage from './pages/exam-officer/ExamTimetablePage';
 import TimetableViewPage from './pages/shared/TimetableViewPage';
@@ -102,7 +101,6 @@ export default function App() {
           <Route index element={<OverviewPage />} />
           <Route path="classes-subjects" element={<ClassesAndSubjectsPage />} />
           <Route path="students" element={<StudentsPage />} />
-          <Route path="promotion" element={<PromotionPage />} />
           <Route path="staff" element={<StaffPage />} />
           <Route path="parents" element={<ParentsPage />} />
           <Route path="teacher-assignments" element={<TeacherAssignmentsPage />} />
@@ -111,15 +109,11 @@ export default function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="timetable" element={<TimetableViewPage />} />
           <Route path="exam-timetable" element={<ExamTimetableViewPage />} />
-          <Route path="cbt" element={<CbtManagementPage />} />
           <Route path="results-export" element={<ResultsExportPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
           <Route path="school-health" element={<SchoolHealthPage />} />
           <Route path="billing" element={<BillingPage />} />
           <Route path="backup" element={<BackupPage />} />
-          <Route path="id-cards" element={<IdCardsPage />} />
-          <Route path="id-cards/:studentId/preview" element={<IdCardPreviewPage />} />
-          <Route path="id-cards/bulk-print" element={<IdCardBulkPrintPage />} />
           <Route path="audit" element={<AuditLogsPage />} />
         </Route>
 
@@ -143,10 +137,10 @@ export default function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="timetable" element={<ClassTimetablePage />} />
           <Route path="exam-timetable" element={<ExamTimetableViewPage />} />
-          <Route path="cbt" element={<CbtManagementPage />} />
           <Route path="results-export" element={<ResultsExportPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
           <Route path="school-health" element={<SchoolHealthPage />} />
+          <Route path="billing" element={<BillingPage />} />
           <Route path="id-cards" element={<IdCardsPage />} />
           <Route path="id-cards/:studentId/preview" element={<IdCardPreviewPage />} />
           <Route path="id-cards/bulk-print" element={<IdCardBulkPrintPage />} />
@@ -199,6 +193,7 @@ export default function App() {
           <Route path="my-class" element={<MyClassPage />} />
           <Route path="marksheet" element={<ClassTeacherMarksheetPage />} />
           <Route path="scores" element={<ScoreEntryPage />} />
+          <Route path="cbt" element={<CbtManagementPage />} />
           <Route path="settings" element={<BursarSettingsPage />} />
           <Route path="timetable" element={<TimetableViewPage />} />
           <Route path="exam-timetable" element={<ExamTimetableViewPage />} />

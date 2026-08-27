@@ -40,6 +40,7 @@ export default function TeacherDashboard() {
     ...(hasSubjectDuties
       ? [{ to: '/teacher/scores', label: 'Score Entry', icon: '✎' }]
       : []),
+    { to: '/teacher/cbt', label: 'CBT Exams', icon: '📝' },
     { to: '/teacher/timetable', label: 'Timetable', icon: '▦' },
     { to: '/teacher/exam-timetable', label: 'Exam Timetable', icon: '▤' },
     { to: '/teacher/announcements', label: 'Announcements', icon: '📣' },
