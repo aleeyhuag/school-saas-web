@@ -136,6 +136,12 @@ export default function Login() {
         <p className="text-xs text-muted text-center mt-4">
           <Link to="/forgot-password" className="text-primary hover:underline">Forgot your password?</Link>
         </p>
+        <p className="text-xs text-muted text-center mt-2">
+          Don&apos;t have a school account?{' '}
+          <Link to="/register-school" className="text-primary font-medium hover:underline">
+            Register your school
+          </Link>
+        </p>
       </form>
     </div>
   );
