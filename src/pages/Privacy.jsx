@@ -6,9 +6,6 @@ const VERSION = '2026-08-11';
 export default function Privacy() {
   return (
     <LegalPageLayout title="Privacy Policy" updated="11 August 2026">
-      <p className="text-xs bg-warning-soft border border-warning/20 rounded-lg p-3 text-muted not-prose">
-        This policy is a product-aligned draft and should be reviewed by qualified Nigerian legal/data-protection counsel before production publication.
-      </p>
 
       <p><strong>Policy version:</strong> {VERSION}</p>
       <p>{BRAND.productName}, operated by <strong>{BRAND.parentCompany}</strong> (“we”, “us”, or “our”), provides school-management software for registered schools and their authorized users. This Privacy Policy explains how personal data is handled when the Platform is used.</p>
@@ -51,7 +48,7 @@ export default function Privacy() {
       <p>We may update this Policy when the Platform, our processing practices or applicable law changes. The version and “Last updated” date on this page identify the version presented to users.</p>
 
       <h2 className="font-display font-semibold text-lg text-ink pt-2">11. Contact and complaints</h2>
-      <p>For privacy questions or requests, use the <a href="/contact" className="text-primary hover:underline">Contact page</a>. A person may also have the right to complain to the Nigeria Data Protection Commission or another competent authority where applicable.</p>
+      <p>For privacy questions or requests, use the <a href="/contact" className="text-primary hover:underline">Contact page</a>.</p>
     </LegalPageLayout>
   );
 }

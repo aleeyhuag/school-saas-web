@@ -8,6 +8,7 @@ import { Field, Input } from '../components/ui/FormFields';
 import { BRAND } from '../config/brand';
 const EMPTY_FORM = {
   school_name: '', school_email: '', school_phone: '', school_address: '',
+  terms_accepted: false, privacy_acknowledged: false,
   admin_name: '', admin_email: '', admin_password: '', admin_password_confirmation: '',
 };
 
@@ -100,7 +101,22 @@ export default function RegisterSchool() {
           </Field>
         </div>
 
-        <Button type="submit" className="w-full mt-2" disabled={submitting}>
+        <div className="mt-5 rounded-lg border border-border bg-bg p-3">
+          <label className="flex items-start gap-3 text-sm text-ink cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.terms_accepted}
+              onChange={(e) => setForm((f) => ({ ...f, terms_accepted: e.target.checked, privacy_acknowledged: e.target.checked }))}
+              className="mt-1 accent-primary"
+            />
+            <span>
+              I agree to the <Link to="/terms" target="_blank" className="text-primary hover:underline font-medium">Terms of Service</Link>
+              {' '}and confirm that I have read the <Link to="/privacy" target="_blank" className="text-primary hover:underline font-medium">Privacy Policy</Link>.
+            </span>
+          </label>
+        </div>
+
+        <Button type="submit" className="w-full mt-2" disabled={submitting || !form.terms_accepted}>
           {submitting ? 'Setting up your school…' : 'Register your school'}
         </Button>
 

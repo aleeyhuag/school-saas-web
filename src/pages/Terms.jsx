@@ -6,9 +6,6 @@ const VERSION = '2026-08-11';
 export default function Terms() {
   return (
     <LegalPageLayout title="Terms of Service" updated="11 August 2026">
-      <p className="text-xs bg-warning-soft border border-warning/20 rounded-lg p-3 text-muted not-prose">
-        These terms are a product-aligned draft and should be reviewed by qualified Nigerian legal counsel before production publication.
-      </p>
 
       <p><strong>Terms version:</strong> {VERSION}</p>
       <p>These Terms govern use of {BRAND.productName} (“the Platform”), operated by <strong>{BRAND.parentCompany}</strong> (“we”, “us”, or “our”). By registering a school or using the Platform on behalf of a school, you agree to these Terms.</p>
