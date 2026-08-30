@@ -135,7 +135,7 @@ const ARTICLES = [
   {
     id: 'id-card-print', category: 'id-cards', title: 'Preview and print ID cards', roles: ['Principal', 'Authorized staff'],
     summary: 'Generate individual or bulk ID-card output and verify the print layout.',
-    steps: ['Open ID Cards.', 'Choose an individual student or the bulk-print workflow.', 'Preview the cards.', 'Check names, photos, admission numbers and school details.', 'Use the print controls provided by the preview page.', 'Test a single physical print before a large batch.'],
+    steps: ['Open ID Cards.', 'Select one or more students for the browser print workflow.', 'Preview the cards.', 'Check names, photos, admission numbers and school details.', 'Use the print controls provided by the preview page.', 'Test a single physical print before a large batch.'],
     result: 'You get print-ready student ID cards without changing the underlying student records.',
   },
   {

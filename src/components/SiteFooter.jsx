@@ -20,6 +20,7 @@ export default function SiteFooter() {
             <Link to="/#features" className="text-xs text-muted hover:text-ink transition-colors">Features</Link>
             <Link to="/register-school" className="text-xs text-muted hover:text-ink transition-colors">Register a school</Link>
             <Link to="/login" className="text-xs text-muted hover:text-ink transition-colors">Log in</Link>
+            <Link to="/help" className="text-xs text-muted hover:text-ink transition-colors">Help Center</Link>
             <Link to="/contact" className="text-xs text-muted hover:text-ink transition-colors">Contact</Link>
             <Link to="/terms" className="text-xs text-muted hover:text-ink transition-colors">Terms</Link>
             <Link to="/privacy" className="text-xs text-muted hover:text-ink transition-colors">Privacy</Link>

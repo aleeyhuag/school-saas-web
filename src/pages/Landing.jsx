@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import { BRAND } from '../config/brand';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 
 const ROLES = [
   ['proprietor','Proprietor','Run the whole school from one place','Enrollment, staff, branches, fees, results and school health — with the control to see what needs attention.'],
@@ -74,6 +75,14 @@ export default function Landing() {
       <section className="max-w-5xl mx-auto px-4 md:px-8 py-16 md:py-24"><div className="text-center mb-8"><p className="text-xs font-bold text-accent uppercase tracking-widest mb-3">One school, different responsibilities</p><h2 className="text-3xl md:text-4xl font-display font-extrabold text-ink">Everyone sees what they need.</h2></div><div className="bg-surface border border-border rounded-3xl shadow-sm overflow-hidden"><div className="flex overflow-x-auto border-b border-border">{ROLES.map(([key,label])=><button key={key} type="button" onClick={()=>setActiveRole(key)} className={`shrink-0 px-4 py-3 text-sm font-semibold border-b-2 ${activeRole===key?'border-primary text-primary':'border-transparent text-muted hover:text-ink'}`}>{label}</button>)}</div><div className="p-7 md:p-10"><p className="text-xs font-bold text-accent uppercase tracking-widest mb-2">{role[1]}</p><h3 className="text-2xl md:text-3xl font-display font-extrabold text-ink">{role[2]}</h3><p className="text-muted leading-7 mt-3 max-w-2xl">{role[3]}</p></div></div></section>
 
       <section className="max-w-6xl mx-auto px-4 md:px-8 pb-16"><div className="bg-accent-soft border border-accent/20 rounded-3xl p-7 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"><div><p className="text-xs font-bold text-warning uppercase tracking-widest mb-2">Built to scale with your school</p><h2 className="text-2xl md:text-3xl font-display font-extrabold text-ink">Stop moving school operations between notebooks, spreadsheets and chats.</h2><p className="text-sm text-muted mt-2 max-w-2xl">Give every role a clear place to work and keep the school's records connected.</p></div><Link to="/register-school" className="shrink-0 bg-primary text-white font-semibold px-6 py-3 rounded-xl hover:bg-primary-hover">Get started</Link></div></section>
+
+      <section className="max-w-6xl mx-auto px-4 md:px-8 pb-16 md:pb-20">
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="bg-surface border border-border rounded-2xl p-5"><p className="text-2xl mb-3" aria-hidden="true">🔐</p><h2 className="font-display font-bold text-ink">Role-based by design</h2><p className="text-sm text-muted leading-6 mt-2">Proprietors, principals, teachers, bursars, parents and students see the tools appropriate to their responsibilities.</p></div>
+          <div className="bg-surface border border-border rounded-2xl p-5"><p className="text-2xl mb-3" aria-hidden="true">📚</p><h2 className="font-display font-bold text-ink">Guidance when you need it</h2><p className="text-sm text-muted leading-6 mt-2">The Skulag Help Center gives simple, practical steps for everyday school operations.</p><Link to="/help" className="inline-flex text-sm font-semibold text-primary mt-3">Browse the Help Center →</Link></div>
+          <div className="bg-surface border border-border rounded-2xl p-5"><p className="text-2xl mb-3" aria-hidden="true">📱</p><h2 className="font-display font-bold text-ink">Built for everyday access</h2><p className="text-sm text-muted leading-6 mt-2">Use Skulag from a phone, tablet or computer and keep the same school records connected.</p></div>
+        </div>
+      </section>
 
       <section className="bg-primary"><div className="max-w-4xl mx-auto px-4 md:px-8 py-16 text-center"><h2 className="text-3xl md:text-4xl font-display font-extrabold text-white">Ready to bring your school together?</h2><p className="text-primary-soft/90 mt-3 mb-7">Register your school and start building your digital school workspace.</p><Link to="/register-school" className="inline-flex bg-white text-primary font-semibold px-6 py-3 rounded-xl hover:bg-white/90">Register your school</Link></div></section>
     </main>

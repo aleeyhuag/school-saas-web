@@ -54,6 +54,7 @@ import MyClassPage from './pages/class-teacher/MyClassPage';
 import Contact from './pages/Contact';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import HelpPage from './pages/HelpPage';
 
 export default function App() {
   return (
@@ -66,6 +67,7 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/help" element={<HelpPage />} />
 
         {/* "/" is the site's actual homepage — an anonymous visitor
             sees the marketing Landing page; a signed-in user is
@@ -101,6 +103,7 @@ export default function App() {
           <Route index element={<OverviewPage />} />
           <Route path="classes-subjects" element={<ClassesAndSubjectsPage />} />
           <Route path="students" element={<StudentsPage />} />
+          <Route path="promotion" element={<PromotionPage />} />
           <Route path="staff" element={<StaffPage />} />
           <Route path="parents" element={<ParentsPage />} />
           <Route path="teacher-assignments" element={<TeacherAssignmentsPage />} />
@@ -114,6 +117,9 @@ export default function App() {
           <Route path="school-health" element={<SchoolHealthPage />} />
           <Route path="billing" element={<BillingPage />} />
           <Route path="backup" element={<BackupPage />} />
+          <Route path="id-cards" element={<IdCardsPage />} />
+          <Route path="id-cards/:studentId/preview" element={<IdCardPreviewPage />} />
+          <Route path="id-cards/bulk-print" element={<IdCardBulkPrintPage />} />
           <Route path="audit" element={<AuditLogsPage />} />
         </Route>
 
