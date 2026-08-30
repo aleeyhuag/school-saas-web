@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
 import ThemeSwitcher from './ThemeSwitcher';
+import HelpCenter from './HelpCenter';
 import OfflineIndicator from './OfflineIndicator';
 import BranchSwitcher from './BranchSwitcher';
 import * as announcementsApi from '../api/announcements';
@@ -25,6 +26,7 @@ import { BRAND } from '../config/brand';
 export default function DashboardLayout({ navItems, children }) {
   const { user, school, roles, logout, hasRole } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   // Shares its query key with AnnouncementsPage — reading an item
   // there invalidates this too, so the badge clears itself without
@@ -126,6 +128,15 @@ export default function DashboardLayout({ navItems, children }) {
             <span className="text-lg leading-none">☰</span>
           </button>
           <div className="ml-auto flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setHelpOpen(true)}
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:bg-bg hover:text-ink transition-colors"
+              aria-label="Open Skulag Help Center"
+              title="Help Center"
+            >
+              <span className="text-base font-semibold mr-5" aria-hidden="true">Help?</span>
+            </button>
             <ThemeSwitcher />
             <OfflineIndicator />
             <NotificationBell />
@@ -133,6 +144,7 @@ export default function DashboardLayout({ navItems, children }) {
         </div>
         <div className="flex-1 min-w-0">{children}</div>
       </main>
+      {helpOpen && <HelpCenter onClose={() => setHelpOpen(false)} />}
     </div>
   );
 }
