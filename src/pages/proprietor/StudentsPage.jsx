@@ -212,7 +212,7 @@ export default function StudentsPage() {
           <Button variant="secondary" size="sm" onClick={() => setPhotoModalStudent(row)}>
             {row.photo_url ? 'Photo ✓' : 'Add photo'}
           </Button>
-          <Button variant="secondary" size="sm" onClick={() => navigate(`/proprietor/id-cards/${row.id}/preview`)}>
+          <Button variant="secondary" size="sm" onClick={() => navigate(`/principal/id-cards/${row.id}/preview`)}>
             ID card
           </Button>
           <Button variant="secondary" size="sm" onClick={() => openEditModal(row)}>
