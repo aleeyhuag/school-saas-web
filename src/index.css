@@ -62,3 +62,65 @@ h1, h2, h3, h4 {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------------------------------------------------------------
+   Stage 58A — theme foundation
+   The application uses semantic tokens so pages can switch theme
+   without rewriting component markup. `data-theme` is applied to
+   <html> by ThemeProvider and is also set on first app render.
+   --------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+  --focus-ring: rgba(31, 92, 74, 0.35);
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #111613;
+  --color-surface: #18201C;
+  --color-border: #2B3831;
+
+  --color-primary: #67B49A;
+  --color-primary-hover: #7BC5AA;
+  --color-primary-soft: #203B31;
+
+  --color-accent: #F0B85C;
+  --color-accent-soft: #3A2F1D;
+
+  --color-ink: #F2F6F3;
+  --color-muted: #A8B5AE;
+
+  --color-success: #68C28D;
+  --color-success-soft: #193526;
+  --color-warning: #E2AD43;
+  --color-warning-soft: #3A2F1D;
+  --color-danger: #F07A7A;
+  --color-danger-soft: #3A2020;
+
+  --focus-ring: rgba(103, 180, 154, 0.45);
+}
+
+html[data-theme='dark'] body {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
+
+html[data-theme='dark'] ::selection {
+  background: var(--color-primary-soft);
+  color: var(--color-ink);
+}
+
+/* Common native controls should follow the selected theme. */
+html[data-theme='dark'] input,
+html[data-theme='dark'] select,
+html[data-theme='dark'] textarea {
+  color-scheme: dark;
+}
+
+html[data-theme='dark'] .shadow-sm,
+html[data-theme='dark'] .shadow-lg {
+  --tw-shadow-color: rgba(0, 0, 0, 0.35);
+}
+
+/* Keep the public/marketing surfaces intentionally branded while the
+   authenticated workspace follows the selected theme. */

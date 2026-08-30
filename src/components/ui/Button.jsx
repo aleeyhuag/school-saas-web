@@ -17,6 +17,7 @@ export default function Button({
   size = 'md',
   className = '',
   children,
+  loading = false,
   ...props
 }) {
   return (
@@ -24,8 +25,11 @@ export default function Button({
       className={`inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors
         disabled:opacity-50 disabled:cursor-not-allowed
         ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
+      disabled={loading || props.disabled}
+      aria-busy={loading || undefined}
       {...props}
     >
+      {loading && <span className="h-4 w-4 rounded-full border-2 border-current/25 border-t-current animate-spin" aria-hidden="true" />}
       {children}
     </button>
   );
