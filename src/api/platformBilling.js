@@ -14,3 +14,6 @@ export const confirmPayment = (paymentId) =>
 
 export const rejectPayment = (paymentId, reason) =>
   api.post(`/platform/billing/payments/${paymentId}/reject`, { reason }).then((r) => r.data);
+
+export const runBillingLifecycleNow = () =>
+  api.post('/platform/billing/lifecycle/run').then((r) => r.data);

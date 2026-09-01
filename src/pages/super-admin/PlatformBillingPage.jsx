@@ -53,6 +53,13 @@ export default function PlatformBillingPage() {
     },
   });
 
+  const lifecycleMutation = useMutation({
+    mutationFn: platformBillingApi.runBillingLifecycleNow,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['billing-overview'] });
+    },
+  });
+
   return (
     <>
       <PageHeader title="Billing" description="Subscription plans and payment review." />
@@ -66,6 +73,31 @@ export default function PlatformBillingPage() {
             </Card>
           ))}
         </div>
+
+        <Card title="Trial & renewal notifications">
+          <p className="text-xs text-muted mb-3">
+            Trial-ending reminders (2 days left, and on the final day), trial expiry lockouts, and
+            renewal grace-period handling normally run automatically every day at 6am. Use this to
+            re-run them right now instead of waiting — useful right after a fix, or to catch up
+            following any downtime.
+          </p>
+          <Button
+            size="sm"
+            disabled={lifecycleMutation.isPending}
+            onClick={() => lifecycleMutation.mutate()}
+          >
+            {lifecycleMutation.isPending ? 'Running…' : 'Run now'}
+          </Button>
+          {lifecycleMutation.data && (
+            <div className="mt-3 text-xs text-ink bg-bg rounded-lg border border-border p-3 space-y-1">
+              <p>Trial reminders sent: <strong>{lifecycleMutation.data.trial_reminders_sent}</strong></p>
+              <p>Trials expired (locked out): <strong>{lifecycleMutation.data.trials_expired}</strong></p>
+              <p>Renewals entered grace period: <strong>{lifecycleMutation.data.renewals_entered_grace}</strong></p>
+              <p>Renewals locked (grace period ended): <strong>{lifecycleMutation.data.renewals_locked}</strong></p>
+              <p className="text-muted">Ran at {formatDate(lifecycleMutation.data.ran_at)}</p>
+            </div>
+          )}
+        </Card>
 
         <Card title="Plans">
           <div className="divide-y divide-border">
