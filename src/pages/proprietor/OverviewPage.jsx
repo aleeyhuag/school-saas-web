@@ -45,7 +45,7 @@ export default function ModernOverviewPage() {
           <div className="relative flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
               <p className="text-xs uppercase tracking-[.18em] font-semibold text-primary-soft">{school?.name || 'School workspace'}</p>
-              <h1 className="font-display text-3xl md:text-4xl font-extrabold mt-2">Good morning, {firstName(user?.name)} 👋</h1>
+              <h1 className="font-display text-3xl md:text-4xl font-extrabold mt-2">Welcome back, {firstName(user?.name)} 👋</h1>
               <p className="text-sm md:text-base text-primary-soft/90 mt-3 max-w-2xl">Here’s your school at a glance. Jump into the work that matters most today.</p>
             </div>
             <div className="shrink-0 rounded-2xl bg-white/10 border border-white/15 px-4 py-3 min-w-48">
