@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { to: '/super-admin/stats', label: 'Platform Stats & Audit', icon: '♡' },
   { to: '/super-admin/billing', label: 'Billing', icon: '💳' },
   { to: '/super-admin/backup', label: 'Platform Backup', icon: '⬇' },
+  { to: '/super-admin/admins', label: 'Super Admins', icon: '☺' },
   { to: '/super-admin/settings', label: 'Account', icon: '⚙' },
 ];
 

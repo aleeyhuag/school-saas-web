@@ -7,6 +7,7 @@ import Home from './routes/Home';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import SchoolsPage from './pages/super-admin/SchoolsPage';
 import SchoolDetailPage from './pages/super-admin/SchoolDetailPage';
+import SuperAdminsPage from './pages/super-admin/SuperAdminsPage';
 import PlatformStatsPage from './pages/super-admin/PlatformStatsPage';
 import PlatformBillingPage from './pages/super-admin/PlatformBillingPage';
 import SuperAdminBackupPage from './pages/super-admin/SuperAdminBackupPage';
@@ -88,6 +89,7 @@ export default function App() {
           <Route path="stats" element={<PlatformStatsPage />} />
           <Route path="billing" element={<PlatformBillingPage />} />
           <Route path="backup" element={<SuperAdminBackupPage />} />
+          <Route path="admins" element={<SuperAdminsPage />} />
           <Route path="settings" element={<AccountSettingsPage />} />
         </Route>
 

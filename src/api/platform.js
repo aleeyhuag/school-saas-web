@@ -15,6 +15,11 @@ export const toggleSchoolActive = (schoolId) =>
 
 export const getPlatformStats = () => api.get('/platform/stats').then((r) => r.data);
 
+export const getSuperAdmins = () => api.get('/platform/super-admins').then((r) => r.data);
+
+export const createSuperAdmin = (payload) =>
+  api.post('/platform/super-admins', payload).then((r) => r.data);
+
 export const deleteSchool = (schoolId, confirmName) =>
   api.delete(`/platform/schools/${schoolId}`, { data: { confirm_name: confirmName } }).then((r) => r.data);
 
