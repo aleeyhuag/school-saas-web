@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as academicApi from '../../api/academic';
+import { useAuth } from '../../context/AuthContext';
 import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -36,6 +37,7 @@ function useDebounced(value, delay = 400) {
 }
 
 export default function StudentsPage() {
+  const { school } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -326,6 +328,7 @@ export default function StudentsPage() {
                 date_of_birth: form.date_of_birth || null,
                 gender: form.gender || null,
                 login_email: form.login_email || undefined,
+                admission_number: school?.auto_generate_admission_numbers ? undefined : form.admission_number,
               });
             }}
           >
@@ -344,13 +347,25 @@ export default function StudentsPage() {
               </Select>
             </Field>
 
-            <Field label="Admission number">
-              <Input
-                required
-                value={form.admission_number}
-                onChange={(e) => setForm({ ...form, admission_number: e.target.value })}
-              />
-            </Field>
+            {school?.auto_generate_admission_numbers ? (
+              editingStudent ? (
+                <Field label="Admission number">
+                  <Input disabled value={form.admission_number} />
+                </Field>
+              ) : (
+                <p className="text-xs text-muted -mt-1 mb-4">
+                  Admission number will be generated automatically when you save.
+                </p>
+              )
+            ) : (
+              <Field label="Admission number">
+                <Input
+                  required
+                  value={form.admission_number}
+                  onChange={(e) => setForm({ ...form, admission_number: e.target.value })}
+                />
+              </Field>
+            )}
 
             <div className="grid grid-cols-2 gap-3">
               <Field label="First name">

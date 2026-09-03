@@ -1,7 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
+import { useAuth } from '../context/AuthContext';
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { to: '/proprietor', label: 'Overview', icon: '⌂', end: true },
   { to: '/proprietor/classes-subjects', label: 'Classes & Subjects', icon: '▤' },
   { to: '/proprietor/students', label: 'Students', icon: '☺' },
@@ -21,15 +22,25 @@ const NAV_ITEMS = [
   { to: '/proprietor/settings', label: 'Settings', icon: '⚙' },
 ];
 
+const MY_TEACHING_ITEM = { to: '/proprietor/my-class', label: 'My Teaching', icon: '🍎' };
+
 /**
  * Proprietor's dashboard is a layout shell + nested routes (see
  * App.jsx) — this component itself renders no page content, just the
  * sidebar/topbar chrome plus whichever sub-page is active via
  * <Outlet />.
+ *
+ * "My Teaching" only appears if this Proprietor ALSO holds the
+ * 'teacher' role — in a small school it's common for the owner to
+ * also personally teach a class or subject. See PrincipalDashboard's
+ * docblock for the full reasoning, same mechanism here.
  */
 export default function ProprietorDashboard() {
+  const { hasRole } = useAuth();
+  const navItems = hasRole('teacher') ? [...BASE_NAV_ITEMS, MY_TEACHING_ITEM] : BASE_NAV_ITEMS;
+
   return (
-    <DashboardLayout navItems={NAV_ITEMS}>
+    <DashboardLayout navItems={navItems}>
       <Outlet />
     </DashboardLayout>
   );

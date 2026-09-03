@@ -9,6 +9,7 @@ import { BRAND } from '../config/brand';
 const EMPTY_FORM = {
   school_name: '', school_email: '', school_phone: '', school_address: '',
   terms_accepted: false, privacy_acknowledged: false,
+  admin_role: 'proprietor',
   admin_name: '', admin_email: '', admin_password: '', admin_password_confirmation: '',
 };
 
@@ -59,8 +60,8 @@ export default function RegisterSchool() {
         </div>
         <h1 className="text-2xl font-bold text-ink mb-1">Register your school</h1>
         <p className="text-sm text-muted mb-6">
-          This creates your school and your own Proprietor account together — you'll be signed in
-          right after.
+          This creates your school and your own account together — you'll be signed in right
+          after.
         </p>
 
         {error && (
@@ -85,7 +86,39 @@ export default function RegisterSchool() {
           <Input value={form.school_address} onChange={set('school_address')} />
         </Field>
 
-        <p className="text-xs font-semibold text-muted uppercase tracking-wide mt-5 mb-3">Your account (Proprietor)</p>
+        <p className="text-xs font-semibold text-muted uppercase tracking-wide mt-5 mb-3">Your account</p>
+        <Field label="I am registering as the school's...">
+          <div className="grid grid-cols-2 gap-3 mb-1">
+            {[
+              { value: 'proprietor', label: 'Proprietor', hint: 'School owner' },
+              { value: 'principal', label: 'Principal', hint: 'Academic head' },
+            ].map((opt) => (
+              <label
+                key={opt.value}
+                className={`flex flex-col items-center text-center gap-0.5 rounded-lg border px-3 py-3 cursor-pointer transition-colors ${
+                  form.admin_role === opt.value
+                    ? 'border-primary bg-primary-soft'
+                    : 'border-border hover:bg-bg'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="admin_role"
+                  value={opt.value}
+                  checked={form.admin_role === opt.value}
+                  onChange={() => setForm((f) => ({ ...f, admin_role: opt.value }))}
+                  className="sr-only"
+                />
+                <span className="font-medium text-sm text-ink">{opt.label}</span>
+                <span className="text-xs text-muted">{opt.hint}</span>
+              </label>
+            ))}
+          </div>
+        </Field>
+        <p className="text-xs text-muted -mt-1 mb-3">
+          Not sure, or the actual proprietor isn't with you right now? Either is fine — whoever
+          registers can invite the other one later from Staff.
+        </p>
         <Field label="Your full name">
           <Input required value={form.admin_name} onChange={set('admin_name')} />
         </Field>

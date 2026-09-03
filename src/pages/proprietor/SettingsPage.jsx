@@ -92,7 +92,7 @@ function SchoolProfileCard() {
 
   const profileQuery = useQuery({ queryKey: ['school-profile'], queryFn: schoolApi.getSchoolProfile });
 
-  const [form, setForm] = useState({ name: '', email: '', phone: '', address: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', auto_generate_admission_numbers: false });
   const [logoFile, setLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -105,12 +105,20 @@ function SchoolProfileCard() {
         email: profileQuery.data.email ?? '',
         phone: profileQuery.data.phone ?? '',
         address: profileQuery.data.address ?? '',
+        auto_generate_admission_numbers: !!profileQuery.data.auto_generate_admission_numbers,
       });
     }
   }, [profileQuery.data]);
 
   const updateMutation = useMutation({
-    mutationFn: () => schoolApi.updateSchoolProfile(form, logoFile),
+    // FormData turns a raw JS boolean into the string "true"/"false",
+    // which Laravel's `boolean` validation rule doesn't accept (only
+    // 1/0/"1"/"0") — send it pre-converted so this doesn't silently
+    // 422 the whole form.
+    mutationFn: () => schoolApi.updateSchoolProfile(
+      { ...form, auto_generate_admission_numbers: form.auto_generate_admission_numbers ? 1 : 0 },
+      logoFile
+    ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['school-profile'] });
       queryClient.invalidateQueries({ queryKey: ['current-user'] }); // school name/logo shown in the sidebar
@@ -181,6 +189,26 @@ function SchoolProfileCard() {
         <Field label="Address (optional)">
           <Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
         </Field>
+
+        <div className="mt-4 mb-5 rounded-lg border border-border bg-bg p-3">
+          <label className="flex items-start gap-3 text-sm text-ink cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.auto_generate_admission_numbers}
+              onChange={(e) => setForm({ ...form, auto_generate_admission_numbers: e.target.checked })}
+              className="mt-1 accent-primary"
+            />
+            <span>
+              <span className="font-medium">Auto-generate admission numbers</span>
+              <br />
+              <span className="text-xs text-muted">
+                {form.auto_generate_admission_numbers
+                  ? 'On — Skulag assigns each new student a number automatically. You can turn this off anytime.'
+                  : 'Off — you type in each student\'s admission number yourself. Turn this on if you\'d rather Skulag assign them.'}
+              </span>
+            </span>
+          </label>
+        </div>
 
         <Button type="submit" disabled={updateMutation.isPending}>
           {updateMutation.isPending ? 'Saving…' : 'Save school profile'}

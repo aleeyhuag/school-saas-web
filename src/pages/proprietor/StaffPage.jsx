@@ -21,8 +21,12 @@ const OPERATIONAL_ROLES = [
   { value: 'teacher', label: 'Teacher' },
 ];
 
-// Senior roles — Stage 11: only a Proprietor can assign these.
+// Senior roles — only a Proprietor or Principal can assign these,
+// and (enforced server-side) they never stack with each other on one
+// person — 'teacher' is the only role that can be added alongside a
+// senior role.
 const SENIOR_ROLES = [
+  { value: 'proprietor', label: 'Proprietor' },
   { value: 'principal', label: 'Principal' },
   { value: 'bursar', label: 'Bursar' },
   { value: 'exam_officer', label: 'Exam Officer' },
@@ -40,7 +44,10 @@ const ROLE_BADGE_TONES = {
 
 export default function StaffPage() {
   const { hasRole } = useAuth();
-  const isProprietor = hasRole('proprietor');
+  // Matches the backend's symmetric permission (StaffController::addRole,
+  // InviteUserController) — Proprietor and Principal are equals for
+  // granting senior roles.
+  const isSenior = hasRole(['proprietor', 'principal']);
   const queryClient = useQueryClient();
 
   const staffQuery = useQuery({ queryKey: ['staff'], queryFn: () => academicApi.getStaff() });
@@ -110,10 +117,19 @@ export default function StaffPage() {
   // role minus ones they already have, and minus senior roles if the
   // current logged-in user isn't a Proprietor (mirrors the invite
   // form's restriction).
+  const SENIOR_ROLE_VALUES = SENIOR_ROLES.map((r) => r.value).filter((v) => v !== 'proprietor');
+
+  // Mirrors StaffController::addRole()'s two rules: only a
+  // Proprietor/Principal can grant a senior role at all, and once
+  // someone holds ONE senior role (principal/bursar/exam_officer),
+  // the only role they can still pick up is 'teacher' — never a
+  // second senior role.
   function availableRolesFor(staffMember) {
-    const all = isProprietor
-      ? [...SENIOR_ROLES, ...OPERATIONAL_ROLES]
-      : OPERATIONAL_ROLES;
+    const alreadyHasSeniorRole = staffMember.roles.some((r) => SENIOR_ROLE_VALUES.includes(r));
+    if (alreadyHasSeniorRole) {
+      return OPERATIONAL_ROLES.filter((r) => !staffMember.roles.includes(r.value));
+    }
+    const all = isSenior ? [...SENIOR_ROLES, ...OPERATIONAL_ROLES] : OPERATIONAL_ROLES;
     return all.filter((r) => !staffMember.roles.includes(r.value));
   }
 
@@ -259,8 +275,8 @@ export default function StaffPage() {
             <Field
               label="Role"
               hint={
-                !isProprietor
-                  ? 'Only the proprietor can appoint a principal, bursar, or exam officer.'
+                !isSenior
+                  ? 'Only the proprietor or principal can appoint a proprietor, principal, bursar, or exam officer.'
                   : undefined
               }
             >
@@ -272,7 +288,7 @@ export default function StaffPage() {
                 <option value="" disabled>
                   Select a role
                 </option>
-                {isProprietor && (
+                {isSenior && (
                   <optgroup label="Senior roles">
                     {SENIOR_ROLES.map((r) => (
                       <option key={r.value} value={r.value}>

@@ -8,11 +8,11 @@ import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
 import PageHeader from '../../components/PageHeader';
-import { Field, Input } from '../../components/ui/FormFields';
+import { Field, Input, Select } from '../../components/ui/FormFields';
 
 const EMPTY_FORM = {
   school_name: '', school_email: '', school_phone: '', school_address: '',
-  admin_name: '', admin_email: '',
+  admin_role: 'proprietor', admin_name: '', admin_email: '',
 };
 
 /**
@@ -133,7 +133,7 @@ export default function SchoolsPage() {
         {createResult ? (
           <div>
             <p className="text-sm text-ink mb-3">
-              <strong>{createResult.school.name}</strong> created — proprietor{' '}
+              <strong>{createResult.school.name}</strong> created — {createResult.admin_role ?? 'proprietor'}{' '}
               <strong>{createResult.proprietor.name}</strong> ({createResult.proprietor.email}).
             </p>
             <div className="bg-warning-soft border border-warning/20 rounded-lg p-3 mb-4">
@@ -181,15 +181,28 @@ export default function SchoolsPage() {
             </Field>
 
             <div className="pt-2 mt-2 border-t border-border">
-              <p className="text-xs text-muted mb-3">Proprietor account for this school</p>
-              <Field label="Proprietor's name">
+              <p className="text-xs text-muted mb-3">First account for this school</p>
+              <Field label="Register this account as">
+                <Select
+                  value={form.admin_role}
+                  onChange={(e) => setForm({ ...form, admin_role: e.target.value })}
+                >
+                  <option value="proprietor">Proprietor (school owner)</option>
+                  <option value="principal">Principal (academic head)</option>
+                </Select>
+              </Field>
+              <p className="text-xs text-muted -mt-1 mb-3">
+                Most first contact ends up being the Principal — that's fine, either one can
+                invite the other later from Staff.
+              </p>
+              <Field label="Their name">
                 <Input
                   required
                   value={form.admin_name}
                   onChange={(e) => setForm({ ...form, admin_name: e.target.value })}
                 />
               </Field>
-              <Field label="Proprietor's email">
+              <Field label="Their email">
                 <Input
                   type="email"
                   required

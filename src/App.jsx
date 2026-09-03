@@ -9,8 +9,8 @@ import SchoolsPage from './pages/super-admin/SchoolsPage';
 import SchoolDetailPage from './pages/super-admin/SchoolDetailPage';
 import SuperAdminsPage from './pages/super-admin/SuperAdminsPage';
 import NotFoundPage from './pages/NotFoundPage';
-// import PlatformLeadsPage from './pages/super-admin/PlatformLeadsPage';
-// import PlatformCampaignsPage from './pages/super-admin/PlatformCampaignsPage';
+import PlatformLeadsPage from './pages/super-admin/PlatformLeadsPage';
+import PlatformCampaignsPage from './pages/super-admin/PlatformCampaignsPage';
 import PlatformStatsPage from './pages/super-admin/PlatformStatsPage';
 import PlatformBillingPage from './pages/super-admin/PlatformBillingPage';
 import SuperAdminBackupPage from './pages/super-admin/SuperAdminBackupPage';
@@ -93,8 +93,8 @@ export default function App() {
           <Route path="billing" element={<PlatformBillingPage />} />
           <Route path="backup" element={<SuperAdminBackupPage />} />
           <Route path="admins" element={<SuperAdminsPage />} />
-          {/* <Route path="leads" element={<PlatformLeadsPage />} />
-          <Route path="campaigns" element={<PlatformCampaignsPage />} /> */}
+          <Route path="leads" element={<PlatformLeadsPage />} />
+          <Route path="campaigns" element={<PlatformCampaignsPage />} />
           <Route path="settings" element={<AccountSettingsPage />} />
         </Route>
 
@@ -130,6 +130,7 @@ export default function App() {
           <Route path="id-cards/:studentId/preview" element={<IdCardPreviewPage />} />
           <Route path="id-cards/bulk-print" element={<IdCardBulkPrintPage />} />
           <Route path="audit" element={<AuditLogsPage />} />
+          <Route path="my-class" element={<MyClassPage />} />
         </Route>
 
         <Route
@@ -156,10 +157,12 @@ export default function App() {
           <Route path="announcements" element={<AnnouncementsPage />} />
           <Route path="school-health" element={<SchoolHealthPage />} />
           <Route path="billing" element={<BillingPage />} />
+          <Route path="backup" element={<BackupPage />} />
           <Route path="id-cards" element={<IdCardsPage />} />
           <Route path="id-cards/:studentId/preview" element={<IdCardPreviewPage />} />
           <Route path="id-cards/bulk-print" element={<IdCardBulkPrintPage />} />
           <Route path="audit" element={<AuditLogsPage />} />
+          <Route path="my-class" element={<MyClassPage />} />
         </Route>
 
         <Route
@@ -178,6 +181,7 @@ export default function App() {
           <Route path="cbt" element={<CbtManagementPage />} />
           <Route path="results-export" element={<ResultsExportPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
+          <Route path="my-class" element={<MyClassPage />} />
         </Route>
 
         <Route
@@ -193,6 +197,7 @@ export default function App() {
           <Route path="parents" element={<ParentsPage />} />
           <Route path="settings" element={<BursarSettingsPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
+          <Route path="my-class" element={<MyClassPage />} />
         </Route>
 
         <Route 
