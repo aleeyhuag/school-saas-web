@@ -1,4 +1,4 @@
-package ng.komputech.schoolsaas;
+package ng.skulag.app;
 
 import com.getcapacitor.BridgeActivity;
 

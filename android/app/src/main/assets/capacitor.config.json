@@ -1,6 +1,6 @@
 {
-	"appId": "ng.komputech.schoolsaas",
-	"appName": "School SaaS",
+	"appId": "ng.skulag.app",
+	"appName": "Skulag SaaS",
 	"webDir": "dist",
 	"server": {
 		"androidScheme": "https"
