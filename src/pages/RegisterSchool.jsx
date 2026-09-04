@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import * as authApi from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
@@ -9,15 +9,17 @@ import { BRAND } from '../config/brand';
 const EMPTY_FORM = {
   school_name: '', school_email: '', school_phone: '', school_address: '',
   terms_accepted: false, privacy_acknowledged: false,
-  admin_role: 'proprietor',
+  admin_role: 'proprietor', referral_code: '',
   admin_name: '', admin_email: '', admin_password: '', admin_password_confirmation: '',
 };
 
 export default function RegisterSchool() {
   const { hydrateFromToken } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const referralCode = searchParams.get('ref');
 
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState({ ...EMPTY_FORM, referral_code: referralCode ?? '' });
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -67,6 +69,12 @@ export default function RegisterSchool() {
         {error && (
           <div className="mb-4 text-sm text-danger bg-danger-soft border border-danger/20 rounded-lg px-3 py-2">
             {error}
+          </div>
+        )}
+
+        {referralCode && (
+          <div className="mb-4 text-sm text-primary bg-primary-soft border border-primary/20 rounded-lg px-3 py-2">
+            Referral code <strong>{referralCode}</strong> applied — thanks for coming from a Skulag partner.
           </div>
         )}
 

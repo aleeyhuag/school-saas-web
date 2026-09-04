@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as platformBillingApi from '../../api/platformBilling';
+import * as referralsApi from '../../api/referrals';
 import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -20,12 +21,31 @@ export default function PlatformBillingPage() {
   const { data: overview } = useQuery({ queryKey: ['billing-overview'], queryFn: platformBillingApi.getBillingOverview });
   const { data: plans } = useQuery({ queryKey: ['platform-plans'], queryFn: platformBillingApi.getPlatformPlans });
   const { data: pending, isLoading } = useQuery({ queryKey: ['pending-payments'], queryFn: platformBillingApi.getPendingPayments });
+  const { data: referralSettings } = useQuery({ queryKey: ['referral-settings'], queryFn: referralsApi.getReferralSettings });
 
   const [editingPlan, setEditingPlan] = useState(null);
   const [priceInput, setPriceInput] = useState('');
   const [durationInput, setDurationInput] = useState('');
   const [rejectingPayment, setRejectingPayment] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
+
+  const [editingReferralRates, setEditingReferralRates] = useState(false);
+  const [yearOneInput, setYearOneInput] = useState('');
+  const [yearTwoInput, setYearTwoInput] = useState('');
+
+  const updateReferralSettingsMutation = useMutation({
+    mutationFn: (payload) => referralsApi.updateReferralSettings(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['referral-settings'] });
+      setEditingReferralRates(false);
+    },
+  });
+
+  function startEditingReferralRates() {
+    setYearOneInput(String(referralSettings?.year_one_percentage ?? 15));
+    setYearTwoInput(String(referralSettings?.year_two_percentage ?? 5));
+    setEditingReferralRates(true);
+  }
 
   const updatePlanMutation = useMutation({
     mutationFn: ({ id, amount_kobo, duration_months }) =>
@@ -95,6 +115,49 @@ export default function PlatformBillingPage() {
               <p>Renewals entered grace period: <strong>{lifecycleMutation.data.renewals_entered_grace}</strong></p>
               <p>Renewals locked (grace period ended): <strong>{lifecycleMutation.data.renewals_locked}</strong></p>
               <p className="text-muted">Ran at {formatDate(lifecycleMutation.data.ran_at)}</p>
+            </div>
+          )}
+        </Card>
+
+        <Card title="Referral commission rates">
+          <p className="text-xs text-muted mb-3">
+            Paid on every payment (monthly or termly) a referred school makes — 15% for their
+            first 12 months as a paying customer, then 5% for the next 12, then nothing. Changing
+            this only affects future payments; commissions already earned keep the rate they were
+            created at.
+          </p>
+          {editingReferralRates ? (
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Year 1 rate (%)">
+                  <Input type="number" step="0.01" min="0" max="100" value={yearOneInput} onChange={(e) => setYearOneInput(e.target.value)} />
+                </Field>
+                <Field label="Year 2 rate (%)">
+                  <Input type="number" step="0.01" min="0" max="100" value={yearTwoInput} onChange={(e) => setYearTwoInput(e.target.value)} />
+                </Field>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  disabled={updateReferralSettingsMutation.isPending}
+                  onClick={() => updateReferralSettingsMutation.mutate({
+                    year_one_percentage: Number(yearOneInput),
+                    year_two_percentage: Number(yearTwoInput),
+                    enabled: referralSettings?.enabled ?? true,
+                  })}
+                >
+                  {updateReferralSettingsMutation.isPending ? 'Saving…' : 'Save'}
+                </Button>
+                <Button size="sm" variant="secondary" onClick={() => setEditingReferralRates(false)}>Cancel</Button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-ink">
+                <strong>{referralSettings?.year_one_percentage ?? '—'}%</strong> year one,{' '}
+                <strong>{referralSettings?.year_two_percentage ?? '—'}%</strong> year two
+              </p>
+              <Button size="sm" variant="secondary" onClick={startEditingReferralRates}>Edit</Button>
             </div>
           )}
         </Card>

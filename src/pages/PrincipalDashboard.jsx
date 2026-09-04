@@ -6,6 +6,7 @@ const BASE_NAV_ITEMS = [
   { to: '/principal', label: 'Overview', icon: '⌂', end: true },
   { to: '/principal/classes-subjects', label: 'Classes & Subjects', icon: '▤' },
   { to: '/principal/students', label: 'Students', icon: '☺' },
+  { to: '/principal/enrollment-applications', label: 'Enrollment Applications', icon: '📥' },
   { to: '/principal/promotion', label: 'Promotion', icon: '↗' },
   { to: '/principal/staff', label: 'Staff', icon: '⚇' },
   { to: '/principal/parents', label: 'Parents', icon: '♥' },

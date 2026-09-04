@@ -3,14 +3,16 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import RegisterSchool from './pages/RegisterSchool';
+import EnrollPage from './pages/EnrollPage';
 import Home from './routes/Home';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import SchoolsPage from './pages/super-admin/SchoolsPage';
 import SchoolDetailPage from './pages/super-admin/SchoolDetailPage';
 import SuperAdminsPage from './pages/super-admin/SuperAdminsPage';
 import NotFoundPage from './pages/NotFoundPage';
-import PlatformLeadsPage from './pages/super-admin/PlatformLeadsPage';
-import PlatformCampaignsPage from './pages/super-admin/PlatformCampaignsPage';
+// import PlatformLeadsPage from './pages/super-admin/PlatformLeadsPage';
+// import PlatformCampaignsPage from './pages/super-admin/PlatformCampaignsPage';
+import ReferralPartnersPage from './pages/super-admin/ReferralPartnersPage';
 import PlatformStatsPage from './pages/super-admin/PlatformStatsPage';
 import PlatformBillingPage from './pages/super-admin/PlatformBillingPage';
 import SuperAdminBackupPage from './pages/super-admin/SuperAdminBackupPage';
@@ -56,6 +58,7 @@ import CbtManagementPage from './pages/shared/CbtManagementPage';
 import StudentCbtPage from './pages/student/StudentCbtPage';
 import PromotionPage from './pages/proprietor/PromotionPage';
 import MyClassPage from './pages/class-teacher/MyClassPage';
+import EnrollmentApplicationsPage from './pages/proprietor/EnrollmentApplicationsPage';
 import Contact from './pages/Contact';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -69,6 +72,7 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/register-school" element={<RegisterSchool />} />
+        <Route path="/enroll/:slug" element={<EnrollPage />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
@@ -93,8 +97,9 @@ export default function App() {
           <Route path="billing" element={<PlatformBillingPage />} />
           <Route path="backup" element={<SuperAdminBackupPage />} />
           <Route path="admins" element={<SuperAdminsPage />} />
-          <Route path="leads" element={<PlatformLeadsPage />} />
-          <Route path="campaigns" element={<PlatformCampaignsPage />} />
+          {/* <Route path="leads" element={<PlatformLeadsPage />} />
+          <Route path="campaigns" element={<PlatformCampaignsPage />} /> */}
+          <Route path="referrals" element={<ReferralPartnersPage />} />
           <Route path="settings" element={<AccountSettingsPage />} />
         </Route>
 
@@ -112,6 +117,7 @@ export default function App() {
           <Route index element={<OverviewPage />} />
           <Route path="classes-subjects" element={<ClassesAndSubjectsPage />} />
           <Route path="students" element={<StudentsPage />} />
+          <Route path="enrollment-applications" element={<EnrollmentApplicationsPage />} />
           <Route path="promotion" element={<PromotionPage />} />
           <Route path="staff" element={<StaffPage />} />
           <Route path="parents" element={<ParentsPage />} />
@@ -144,6 +150,7 @@ export default function App() {
           <Route index element={<OverviewPage />} />
           <Route path="classes-subjects" element={<ClassesAndSubjectsPage />} />
           <Route path="students" element={<StudentsPage />} />
+          <Route path="enrollment-applications" element={<EnrollmentApplicationsPage />} />
           <Route path="promotion" element={<PromotionPage />} />
           <Route path="staff" element={<StaffPage />} />
           <Route path="parents" element={<ParentsPage />} />

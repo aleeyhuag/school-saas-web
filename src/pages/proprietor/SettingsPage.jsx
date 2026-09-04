@@ -92,7 +92,10 @@ function SchoolProfileCard() {
 
   const profileQuery = useQuery({ queryKey: ['school-profile'], queryFn: schoolApi.getSchoolProfile });
 
-  const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', auto_generate_admission_numbers: false });
+  const [form, setForm] = useState({
+    name: '', email: '', phone: '', address: '',
+    auto_generate_admission_numbers: false, self_enrollment_enabled: false,
+  });
   const [logoFile, setLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -106,6 +109,7 @@ function SchoolProfileCard() {
         phone: profileQuery.data.phone ?? '',
         address: profileQuery.data.address ?? '',
         auto_generate_admission_numbers: !!profileQuery.data.auto_generate_admission_numbers,
+        self_enrollment_enabled: !!profileQuery.data.self_enrollment_enabled,
       });
     }
   }, [profileQuery.data]);
@@ -116,7 +120,11 @@ function SchoolProfileCard() {
     // 1/0/"1"/"0") — send it pre-converted so this doesn't silently
     // 422 the whole form.
     mutationFn: () => schoolApi.updateSchoolProfile(
-      { ...form, auto_generate_admission_numbers: form.auto_generate_admission_numbers ? 1 : 0 },
+      {
+        ...form,
+        auto_generate_admission_numbers: form.auto_generate_admission_numbers ? 1 : 0,
+        self_enrollment_enabled: form.self_enrollment_enabled ? 1 : 0,
+      },
       logoFile
     ),
     onSuccess: () => {
@@ -208,6 +216,44 @@ function SchoolProfileCard() {
               </span>
             </span>
           </label>
+        </div>
+
+        <div className="mt-4 mb-5 rounded-lg border border-border bg-bg p-3">
+          <label className="flex items-start gap-3 text-sm text-ink cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.self_enrollment_enabled}
+              onChange={(e) => setForm({ ...form, self_enrollment_enabled: e.target.checked })}
+              className="mt-1 accent-primary"
+            />
+            <span>
+              <span className="font-medium">Online student enrollment</span>
+              <br />
+              <span className="text-xs text-muted">
+                {form.self_enrollment_enabled
+                  ? 'On — parents can apply online. Applications need your approval before anyone becomes an enrolled student.'
+                  : 'Off — turn this on to get a shareable link where parents can apply, upload proof of payment, and wait for your approval.'}
+              </span>
+            </span>
+          </label>
+          {form.self_enrollment_enabled && profileQuery.data?.slug && (
+            <div className="mt-3 flex items-center gap-2">
+              <Input
+                readOnly
+                value={`${window.location.origin}/enroll/${profileQuery.data.slug}`}
+                className="text-xs"
+                onFocus={(e) => e.target.select()}
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => navigator.clipboard?.writeText(`${window.location.origin}/enroll/${profileQuery.data.slug}`)}
+              >
+                Copy
+              </Button>
+            </div>
+          )}
         </div>
 
         <Button type="submit" disabled={updateMutation.isPending}>

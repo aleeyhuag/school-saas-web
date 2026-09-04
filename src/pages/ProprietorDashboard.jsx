@@ -6,6 +6,7 @@ const BASE_NAV_ITEMS = [
   { to: '/proprietor', label: 'Overview', icon: '⌂', end: true },
   { to: '/proprietor/classes-subjects', label: 'Classes & Subjects', icon: '▤' },
   { to: '/proprietor/students', label: 'Students', icon: '☺' },
+  { to: '/proprietor/enrollment-applications', label: 'Enrollment Applications', icon: '📥' },
   { to: '/proprietor/staff', label: 'Staff', icon: '⚇' },
   { to: '/proprietor/parents', label: 'Parents', icon: '♥' },
   { to: '/proprietor/teacher-assignments', label: 'Teacher Assignments', icon: '⇄' },
