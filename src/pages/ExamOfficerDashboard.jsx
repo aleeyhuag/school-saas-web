@@ -12,7 +12,7 @@ const BASE_NAV_ITEMS = [
   { to: '/exam-officer/settings', label: 'Account', icon: '⚙' },
 ];
 
-const MY_TEACHING_ITEM = { to: '/exam-officer/my-class', label: 'My Teaching', icon: '🍎' };
+const MY_TEACHING_ITEM = { to: '/teaching', label: 'My Teaching', icon: '🍎' };
 
 /**
  * Exam Officer's dashboard is narrow and focused: Grading Settings

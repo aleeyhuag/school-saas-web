@@ -22,6 +22,8 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [schoolChoices, setSchoolChoices] = useState([]);
+  const [selectedSchoolId, setSelectedSchoolId] = useState('');
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -29,7 +31,8 @@ export default function Login() {
     setSubmitting(true);
 
     try {
-      const data = await login({ email, password });
+      const data = await login({ email, password, ...(selectedSchoolId ? { school_id: Number(selectedSchoolId) } : {}) });
+      setSchoolChoices([]);
 
       // admin.skulag.com.ng is Super Admin's dedicated, exclusive
       // entry point — anyone else authenticating successfully here
@@ -58,6 +61,10 @@ export default function Login() {
         navigate('/');
       }
     } catch (err) {
+      if (err.response?.status === 409 && err.response?.data?.school_choices) {
+        setSchoolChoices(err.response.data.school_choices);
+        return;
+      }
       const status = err.response?.status;
       const serverMessage = err.response?.data?.errors?.email?.[0] || err.response?.data?.message;
       let message = serverMessage;
@@ -127,6 +134,16 @@ export default function Login() {
             placeholder="••••••••"
           />
         </Field>
+
+        {schoolChoices.length > 0 && (
+          <div className="mb-4 rounded-lg border border-border bg-bg p-3">
+            <p className="text-sm font-medium text-ink mb-2">This email is used at more than one school. Choose where to sign in:</p>
+            <select className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-ink" value={selectedSchoolId} onChange={(e) => setSelectedSchoolId(e.target.value)} required>
+              <option value="">Select school…</option>
+              {schoolChoices.map((school) => <option key={school.id} value={school.id}>{school.name}</option>)}
+            </select>
+          </div>
+        )}
 
         <Button type="submit" className="w-full" disabled={submitting}>
           {submitting ? 'Signing in…' : 'Sign in'}

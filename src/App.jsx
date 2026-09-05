@@ -10,8 +10,8 @@ import SchoolsPage from './pages/super-admin/SchoolsPage';
 import SchoolDetailPage from './pages/super-admin/SchoolDetailPage';
 import SuperAdminsPage from './pages/super-admin/SuperAdminsPage';
 import NotFoundPage from './pages/NotFoundPage';
-// import PlatformLeadsPage from './pages/super-admin/PlatformLeadsPage';
-// import PlatformCampaignsPage from './pages/super-admin/PlatformCampaignsPage';
+import PlatformLeadsPage from './pages/super-admin/PlatformLeadsPage';
+import PlatformCampaignsPage from './pages/super-admin/PlatformCampaignsPage';
 import ReferralPartnersPage from './pages/super-admin/ReferralPartnersPage';
 import PlatformStatsPage from './pages/super-admin/PlatformStatsPage';
 import PlatformBillingPage from './pages/super-admin/PlatformBillingPage';
@@ -56,13 +56,18 @@ import IdCardPreviewPage from './pages/shared/IdCardPreviewPage';
 import IdCardBulkPrintPage from './pages/shared/IdCardBulkPrintPage';
 import CbtManagementPage from './pages/shared/CbtManagementPage';
 import StudentCbtPage from './pages/student/StudentCbtPage';
-import PromotionPage from './pages/proprietor/PromotionPage';
 import MyClassPage from './pages/class-teacher/MyClassPage';
 import EnrollmentApplicationsPage from './pages/proprietor/EnrollmentApplicationsPage';
+import PromotionPage from './pages/proprietor/PromotionPage';
 import Contact from './pages/Contact';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import HelpPage from './pages/HelpPage';
+import ReferralPartnersPublic from './pages/ReferralPartnersPublic';
+import PartnerLogin from './pages/PartnerLogin';
+import PartnerDashboard from './pages/PartnerDashboard';
+import ReferralPartnerDetailPage from './pages/super-admin/ReferralPartnerDetailPage';
+import TeachingLandingRedirect from './pages/TeachingLandingRedirect';
 
 export default function App() {
   return (
@@ -77,6 +82,10 @@ export default function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/help" element={<HelpPage />} />
+        <Route path="/referrals" element={<ReferralPartnersPublic />} />
+        <Route path="/partner/register" element={<ReferralPartnersPublic />} />
+        <Route path="/partner/login" element={<PartnerLogin />} />
+        <Route path="/partner/dashboard" element={<PartnerDashboard />} />
 
         {/* "/" is the site's actual homepage — an anonymous visitor
             sees the marketing Landing page; a signed-in user is
@@ -97,9 +106,10 @@ export default function App() {
           <Route path="billing" element={<PlatformBillingPage />} />
           <Route path="backup" element={<SuperAdminBackupPage />} />
           <Route path="admins" element={<SuperAdminsPage />} />
-          {/* <Route path="leads" element={<PlatformLeadsPage />} />
-          <Route path="campaigns" element={<PlatformCampaignsPage />} /> */}
+          <Route path="leads" element={<PlatformLeadsPage />} />
+          <Route path="campaigns" element={<PlatformCampaignsPage />} />
           <Route path="referrals" element={<ReferralPartnersPage />} />
+          <Route path="referrals/:partnerId" element={<ReferralPartnerDetailPage />} />
           <Route path="settings" element={<AccountSettingsPage />} />
         </Route>
 
@@ -118,7 +128,6 @@ export default function App() {
           <Route path="classes-subjects" element={<ClassesAndSubjectsPage />} />
           <Route path="students" element={<StudentsPage />} />
           <Route path="enrollment-applications" element={<EnrollmentApplicationsPage />} />
-          <Route path="promotion" element={<PromotionPage />} />
           <Route path="staff" element={<StaffPage />} />
           <Route path="parents" element={<ParentsPage />} />
           <Route path="teacher-assignments" element={<TeacherAssignmentsPage />} />
@@ -132,9 +141,6 @@ export default function App() {
           <Route path="school-health" element={<SchoolHealthPage />} />
           <Route path="billing" element={<BillingPage />} />
           <Route path="backup" element={<BackupPage />} />
-          <Route path="id-cards" element={<IdCardsPage />} />
-          <Route path="id-cards/:studentId/preview" element={<IdCardPreviewPage />} />
-          <Route path="id-cards/bulk-print" element={<IdCardBulkPrintPage />} />
           <Route path="audit" element={<AuditLogsPage />} />
           <Route path="my-class" element={<MyClassPage />} />
         </Route>
@@ -208,14 +214,14 @@ export default function App() {
         </Route>
 
         <Route 
-          path="/teacher" 
+          path="/teaching" 
           element={
             <ProtectedRoute allowedRoles={['teacher']}>
               <TeacherDashboard />
             </ProtectedRoute>
           }
         >
-          <Route index element={<Navigate to="attendance" replace />} />
+          <Route index element={<TeachingLandingRedirect />} />
           <Route path="attendance" element={<ClassTeacherAttendancePage />} />
           <Route path="my-class" element={<MyClassPage />} />
           <Route path="marksheet" element={<ClassTeacherMarksheetPage />} />
@@ -226,6 +232,8 @@ export default function App() {
           <Route path="exam-timetable" element={<ExamTimetableViewPage />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
         </Route>
+
+        <Route path="/teacher" element={<Navigate to="/teaching" replace />} />
 
         <Route
           path="/parent"

@@ -10,7 +10,7 @@ const BASE_NAV_ITEMS = [
   { to: '/bursar/settings', label: 'Settings', icon: '⚙' },
 ];
 
-const MY_TEACHING_ITEM = { to: '/bursar/my-class', label: 'My Teaching', icon: '🍎' };
+const MY_TEACHING_ITEM = { to: '/teaching', label: 'My Teaching', icon: '🍎' };
 
 /**
  * Bursar's dashboard is deliberately narrow — just Overview, Fees

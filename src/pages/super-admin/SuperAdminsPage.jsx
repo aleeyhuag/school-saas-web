@@ -10,135 +10,16 @@ import PageHeader from '../../components/PageHeader';
 import { Field, Input } from '../../components/ui/FormFields';
 
 const EMPTY_FORM = { name: '', email: '' };
-
-function formatDate(value) {
-  if (!value) return '—';
-  return new Date(value).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-}
-
-/**
- * The platform owner's own team — every super_admin account, and a
- * way to add more without touching the database directly. Same
- * "generate a temporary password, show it once" pattern used when
- * onboarding a school's proprietor from SchoolsPage.
- */
-export default function SuperAdminsPage() {
-  const queryClient = useQueryClient();
-
-  const adminsQuery = useQuery({
-    queryKey: ['platform-super-admins'],
-    queryFn: platformApi.getSuperAdmins,
-  });
-
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [form, setForm] = useState(EMPTY_FORM);
-  const [error, setError] = useState(null);
-  const [createResult, setCreateResult] = useState(null);
-
-  const createMutation = useMutation({
-    mutationFn: platformApi.createSuperAdmin,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['platform-super-admins'] });
-      setCreateResult(data);
-      setForm(EMPTY_FORM);
-    },
-    onError: (err) =>
-      setError(
-        err.response?.data?.errors
-          ? Object.values(err.response.data.errors).flat().join(' ')
-          : err.response?.data?.message ?? 'Could not create this account.'
-      ),
-  });
-
-  function openCreateModal() {
-    setForm(EMPTY_FORM);
-    setError(null);
-    setCreateResult(null);
-    setCreateModalOpen(true);
-  }
-
-  const columns = [
-    { key: 'name', label: 'Name' },
-    { key: 'email', label: 'Email' },
-    {
-      key: 'status',
-      label: 'Status',
-      render: (row) => (
-        <Badge tone={row.status === 'approved' ? 'success' : 'neutral'}>{row.status}</Badge>
-      ),
-    },
-    { key: 'created_at', label: 'Added', render: (row) => formatDate(row.created_at) },
-  ];
-
-  return (
-    <>
-      <PageHeader
-        title="Super Admins"
-        description="Everyone with full platform owner access."
-        action={<Button onClick={openCreateModal}>+ Add super admin</Button>}
-      />
-
-      <div className="p-4 md:p-8 space-y-6">
-        <div className="bg-warning-soft border border-warning/20 rounded-lg p-3 text-xs text-ink">
-          Anyone added here gets the same full platform access you have — every school, every
-          payment, every backup, and the ability to add or remove other super admins. Only add
-          people you'd trust with all of it.
-        </div>
-
-        <Card>
-          <DataTable
-            columns={columns}
-            rows={adminsQuery.data}
-            emptyMessage={adminsQuery.isLoading ? 'Loading…' : 'No super admins found.'}
-          />
-        </Card>
-      </div>
-
-      <Modal open={createModalOpen} onClose={() => setCreateModalOpen(false)} title="Add a super admin">
-        {createResult ? (
-          <div>
-            <p className="text-sm text-ink mb-3">
-              <strong>{createResult.user.name}</strong> ({createResult.user.email}) can now sign in.
-            </p>
-            <div className="bg-warning-soft border border-warning/20 rounded-lg p-3 mb-4">
-              <p className="text-xs text-muted mb-1">Temporary password (share this securely — shown once):</p>
-              <p className="font-mono text-sm text-ink">{createResult.temporary_password}</p>
-            </div>
-            <Button className="w-full" onClick={() => setCreateModalOpen(false)}>
-              Done
-            </Button>
-          </div>
-        ) : (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              createMutation.mutate(form);
-            }}
-          >
-            {error && <p className="text-sm text-danger mb-4">{error}</p>}
-
-            <Field label="Full name">
-              <Input
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
-            </Field>
-            <Field label="Email">
-              <Input
-                type="email"
-                required
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
-            </Field>
-
-            <Button type="submit" className="w-full" disabled={createMutation.isPending}>
-              {createMutation.isPending ? 'Creating…' : 'Create super admin'}
-            </Button>
-          </form>
-        )}
-      </Modal>
-    </>
-  );
+function formatDate(value){if(!value)return '—';return new Date(value).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});}
+export default function SuperAdminsPage(){
+ const qc=useQueryClient(); const q=useQuery({queryKey:['platform-super-admins'],queryFn:platformApi.getSuperAdmins});
+ const [createOpen,setCreateOpen]=useState(false),[form,setForm]=useState(EMPTY_FORM),[error,setError]=useState(null),[result,setResult]=useState(null);
+ const [action,setAction]=useState(null),[confirmEmail,setConfirmEmail]=useState('');
+ const create=useMutation({mutationFn:platformApi.createSuperAdmin,onSuccess:d=>{qc.invalidateQueries({queryKey:['platform-super-admins']});setResult(d);setForm(EMPTY_FORM)},onError:e=>setError(Object.values(e.response?.data?.errors||{}).flat().join(' ')||e.response?.data?.message||'Could not create this account.')});
+ const toggle=useMutation({mutationFn:platformApi.toggleSuperAdminStatus,onSuccess:()=>{qc.invalidateQueries({queryKey:['platform-super-admins']});setAction(null)},onError:e=>setError(e.response?.data?.message||Object.values(e.response?.data?.errors||{}).flat().join(' ')||'Could not change status.')});
+ const del=useMutation({mutationFn:({id,confirm_email})=>platformApi.deleteSuperAdmin(id,confirm_email),onSuccess:()=>{qc.invalidateQueries({queryKey:['platform-super-admins']});setAction(null);setConfirmEmail('')},onError:e=>setError(e.response?.data?.message||Object.values(e.response?.data?.errors||{}).flat().join(' ')||'Could not delete this account.')});
+ const columns=[{key:'name',label:'Name'},{key:'email',label:'Email'},{key:'status',label:'Status',render:r=><Badge tone={r.status==='approved'?'success':'neutral'}>{r.status}</Badge>},{key:'created_at',label:'Added',render:r=>formatDate(r.created_at)},{key:'actions',label:'',render:r=><div className="flex gap-2 justify-end"><Button size="sm" variant={r.status==='disabled'?'secondary':'danger'} disabled={toggle.isPending||del.isPending||r.id===q.data?.current_user_id} onClick={()=>{setError(null);setAction({type:'toggle',row:r})}}>{r.status==='disabled'?'Activate':'Deactivate'}</Button><Button size="sm" variant="danger" disabled={del.isPending||r.id===q.data?.current_user_id} onClick={()=>{setError(null);setConfirmEmail('');setAction({type:'delete',row:r})}}>Delete</Button></div>}];
+ return <><PageHeader title="Super Admins" description="Everyone with full platform owner access." action={<Button onClick={()=>{setError(null);setResult(null);setCreateOpen(true)}}>+ Add super admin</Button>}/><div className="p-4 md:p-8 space-y-6"><div className="bg-warning-soft border border-warning/20 rounded-lg p-3 text-xs text-ink">Super Admin accounts have full platform access. Self-management and last-admin safeguards are enforced by the API.</div><Card><DataTable columns={columns} rows={q.data?.admins??q.data} emptyMessage={q.isLoading?'Loading…':'No super admins found.'}/></Card></div>
+ <Modal open={createOpen} onClose={()=>setCreateOpen(false)} title="Add a super admin">{result?<div><p className="text-sm text-ink mb-3"><strong>{result.user.name}</strong> ({result.user.email}) can now sign in.</p><div className="bg-warning-soft border border-warning/20 rounded-lg p-3 mb-4"><p className="text-xs text-muted mb-1">Temporary password:</p><p className="font-mono text-sm text-ink">{result.temporary_password}</p></div><Button className="w-full" onClick={()=>setCreateOpen(false)}>Done</Button></div>:<form onSubmit={e=>{e.preventDefault();setError(null);create.mutate(form)}}>{error&&<p className="text-sm text-danger mb-4">{error}</p>}<Field label="Full name"><Input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></Field><Field label="Email"><Input type="email" required value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/></Field><Button className="w-full" disabled={create.isPending}>{create.isPending?'Creating…':'Create super admin'}</Button></form>}</Modal>
+ <Modal open={!!action} onClose={()=>{setAction(null);setError(null)}} title={action?.type==='delete'?'Delete Super Admin':'Change Super Admin status'}>{action&&<div><p className="text-sm text-ink mb-4">{action.type==='delete'?<>This permanently deletes <strong>{action.row.email}</strong>. Type their exact email to confirm.</>:<>You are about to {action.row.status==='disabled'?'reactivate':'deactivate'} <strong>{action.row.email}</strong>. {action.row.status!=='disabled'&&'Their active sessions will be revoked.'}</>}</p>{action.type==='delete'&&<Input type="email" value={confirmEmail} onChange={e=>setConfirmEmail(e.target.value)} placeholder={action.row.email}/>} {error&&<p className="text-sm text-danger mt-3">{error}</p>}<div className="flex justify-end gap-2 mt-5"><Button variant="secondary" onClick={()=>setAction(null)}>Cancel</Button><Button variant="danger" disabled={action.type==='delete'?del.isPending||confirmEmail.toLowerCase()!==action.row.email.toLowerCase():toggle.isPending} onClick={()=>action.type==='delete'?del.mutate({id:action.row.id,confirm_email:confirmEmail}):toggle.mutate(action.row.id)}>{action.type==='delete'?'Delete permanently':action.row.status==='disabled'?'Activate':'Deactivate'}</Button></div></div>}</Modal></>;
 }

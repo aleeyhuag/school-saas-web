@@ -23,7 +23,7 @@ const BASE_NAV_ITEMS = [
   { to: '/proprietor/settings', label: 'Settings', icon: '⚙' },
 ];
 
-const MY_TEACHING_ITEM = { to: '/proprietor/my-class', label: 'My Teaching', icon: '🍎' };
+const MY_TEACHING_ITEM = { to: '/teaching', label: 'My Teaching', icon: '🍎' };
 
 /**
  * Proprietor's dashboard is a layout shell + nested routes (see

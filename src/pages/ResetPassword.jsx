@@ -10,6 +10,8 @@ export default function ResetPassword() {
   const navigate = useNavigate();
   const token = searchParams.get('token') ?? '';
   const email = searchParams.get('email') ?? '';
+  const userId = searchParams.get('user_id') ?? '';
+  const setup = searchParams.get('setup') === '1';
 
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
@@ -25,6 +27,8 @@ export default function ResetPassword() {
       await authApi.resetPassword({
         token,
         email,
+        user_id: userId,
+        setup,
         password,
         password_confirmation: passwordConfirmation,
       });
@@ -41,7 +45,7 @@ export default function ResetPassword() {
     }
   }
 
-  if (!token || !email) {
+  if (!token || !userId) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-bg">
         <div className="w-full max-w-sm bg-surface p-8 rounded-xl shadow-sm border border-border text-center">

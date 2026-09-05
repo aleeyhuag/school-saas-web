@@ -20,6 +20,9 @@ export const getSuperAdmins = () => api.get('/platform/super-admins').then((r) =
 export const createSuperAdmin = (payload) =>
   api.post('/platform/super-admins', payload).then((r) => r.data);
 
+export const toggleSuperAdminStatus = (id) => api.post(`/platform/super-admins/${id}/toggle-status`).then((r) => r.data);
+export const deleteSuperAdmin = (id, confirm_email) => api.delete(`/platform/super-admins/${id}`, { data: { confirm_email } }).then((r) => r.data);
+
 export const deleteSchool = (schoolId, confirmName) =>
   api.delete(`/platform/schools/${schoolId}`, { data: { confirm_name: confirmName } }).then((r) => r.data);
 

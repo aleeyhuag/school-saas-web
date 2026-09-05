@@ -7,8 +7,8 @@ import api from './client';
  * read and to reuse (e.g. the register-school page also needs this).
  */
 
-export function login({ email, password, device_name }) {
-  return api.post('/auth/login', { email, password, device_name }).then((res) => res.data);
+export function login({ email, password, device_name, school_id }) {
+  return api.post('/auth/login', { email, password, device_name, school_id }).then((res) => res.data);
 }
 
 export function registerSchool(payload) {

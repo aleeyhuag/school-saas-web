@@ -25,7 +25,7 @@ const BASE_NAV_ITEMS = [
   { to: '/principal/settings', label: 'Settings', icon: '⚙' },
 ];
 
-const MY_TEACHING_ITEM = { to: '/principal/my-class', label: 'My Teaching', icon: '🍎' };
+const MY_TEACHING_ITEM = { to: '/teaching', label: 'My Teaching', icon: '🍎' };
 
 /**
  * Principal's dashboard reuses the EXACT same page components as

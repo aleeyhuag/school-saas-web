@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as referralsApi from '../../api/referrals';
 import Card from '../../components/ui/Card';
@@ -106,7 +107,7 @@ export default function ReferralPartnersPage() {
       label: '',
       render: (row) => (
         <div className="flex gap-2 justify-end">
-          <Button size="sm" variant="secondary" onClick={() => setDetailId(row.id)}>View</Button>
+          <Link className="inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium border border-border text-ink hover:bg-bg" to={`/super-admin/referrals/${row.id}`}>View</Link>
           <Button
             size="sm"
             variant={row.status === 'active' ? 'danger' : 'secondary'}
