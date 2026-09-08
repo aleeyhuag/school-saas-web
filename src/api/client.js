@@ -10,25 +10,13 @@ import axios from 'axios';
  *     token on every outgoing request.
  *  2. If the API ever responds 401 (token missing/expired/revoked),
  *     the token is cleared and the user is bounced to /login.
- *  3. If the API responds 403 with code "school_disabled" (the
- *     EnsureSchoolIsActive middleware — a super_admin disabled this
- *     user's school mid-session), same clean bounce, but to a login
- *     page that explains why, instead of a silent "session expired."
+ *  3. If the API responds 403 with code "school_disabled", the
+ *     school is billing-locked. This is NOT an authentication failure:
+ *     keep the token, notify AuthContext, and let ProtectedRoute/
+ *     DashboardRedirect force the user into Billing.
  */
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  // Without this, a genuinely dead connection just hangs forever —
-  // axios's default timeout is 0 (no timeout). This matters
-  // specifically for the offline-sync flow (Stage 52): it only queues
-  // a save locally when it detects a network failure, but
-  // `navigator.onLine` is unreliable in the real world (it often still
-  // reports `true` when there's no actual signal — it mainly detects
-  // "is a network interface present", not "can this reach the
-  // internet"). Without a timeout, a save made while genuinely
-  // disconnected — but where the browser still thinks it's online —
-  // would hang on this request indefinitely instead of failing fast
-  // and falling back to the local queue. 15s is generous for a normal
-  // request but short enough that a dead connection resolves quickly.
   timeout: 15_000,
 });
 
@@ -50,9 +38,14 @@ api.interceptors.response.use(
       localStorage.removeItem('token');
       window.location.href = '/login';
     } else if (status === 403 && code === 'school_disabled') {
-      localStorage.removeItem('token');
-      const reason = error.response?.data?.reason ?? 'disabled';
-      window.location.href = `/login?reason=${reason}`;
+      // IMPORTANT: a billing lock is deliberately recoverable. The user
+      // must remain authenticated so Proprietor/Principal can reach Billing
+      // and pay/reactivate the school. Do NOT remove the Sanctum token.
+      window.dispatchEvent(new CustomEvent('skulag:billing-locked', {
+        detail: {
+          reason: error.response?.data?.reason ?? 'disabled',
+        },
+      }));
     }
 
     return Promise.reject(error);
