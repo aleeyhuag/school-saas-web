@@ -51,7 +51,7 @@ export default function Landing() {
                 <Link to="/register-school" className="text-center bg-primary text-white font-semibold px-6 py-3.5 rounded-xl hover:bg-primary-hover transition-colors">Start your school</Link>
                 <Link to="/login" className="text-center bg-surface border border-border text-ink font-semibold px-6 py-3.5 rounded-xl hover:bg-bg transition-colors">Log in</Link>
               </div>
-              <Link to="/referrals" className="text-center flex flex-col mt-4 bg-accent-soft text-black font-semibold px-5 py-3 rounded-xl">Become a referral partner</Link>
+              <Link to="/referrals" className="text-center flex flex-col mt-4 bg-accent-soft text-ink font-semibold px-5 py-3 rounded-xl">Become a referral partner</Link>
               <div className="flex flex-wrap gap-x-6 gap-y-2 mt-6 text-xs text-muted"><span>✓ Role-based access</span><span>✓ Multi-branch ready</span><span>✓ No spreadsheet maze</span></div>
             </div>
             <div className="bg-surface border border-border rounded-3xl shadow-xl p-3 md:p-4 rotate-0 lg:rotate-1">
