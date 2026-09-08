@@ -1,22 +1,24 @@
 import axios from 'axios';
+import { Capacitor } from '@capacitor/core';
 
 /**
- * One Axios instance used by the ENTIRE app — every dashboard, every
- * role, imports this instead of creating its own. Three things happen
- * automatically on every request/response so individual components
- * never have to think about auth:
+ * One Axios instance used by the ENTIRE app.
  *
- *  1. If a token is saved (localStorage), it's attached as a Bearer
- *     token on every outgoing request.
- *  2. If the API ever responds 401 (token missing/expired/revoked),
- *     the token is cleared and the user is bounced to /login.
- *  3. If the API responds 403 with code "school_disabled", the
- *     school is billing-locked. This is NOT an authentication failure:
- *     keep the token, notify AuthContext, and let ProtectedRoute/
- *     DashboardRedirect force the user into Billing.
+ * Native Android builds must never inherit a localhost API URL from a local
+ * .env file: localhost inside an Android WebView means the phone itself, not
+ * the Skulag API server. If a native build is configured with localhost (or
+ * has no VITE_API_BASE_URL), use the production API explicitly.
  */
+const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+const nativeProductionBaseUrl = 'https://api.skulag.com.ng/api';
+const isNative = Capacitor.isNativePlatform();
+const isLoopback = /^(https?:\/\/)?(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?(\/|$)/i.test(configuredBaseUrl ?? '');
+const apiBaseUrl = isNative && (!configuredBaseUrl || isLoopback)
+  ? nativeProductionBaseUrl
+  : configuredBaseUrl;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: apiBaseUrl,
   timeout: 15_000,
 });
 
@@ -38,9 +40,8 @@ api.interceptors.response.use(
       localStorage.removeItem('token');
       window.location.href = '/login';
     } else if (status === 403 && code === 'school_disabled') {
-      // IMPORTANT: a billing lock is deliberately recoverable. The user
-      // must remain authenticated so Proprietor/Principal can reach Billing
-      // and pay/reactivate the school. Do NOT remove the Sanctum token.
+      // A billing lock is deliberately recoverable. Keep the authenticated
+      // token so Proprietor/Principal can reach Billing and reactivate.
       window.dispatchEvent(new CustomEvent('skulag:billing-locked', {
         detail: {
           reason: error.response?.data?.reason ?? 'disabled',
