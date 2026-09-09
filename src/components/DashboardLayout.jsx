@@ -111,7 +111,7 @@ export default function DashboardLayout({ navItems, children }) {
           >
             <span className="text-lg leading-none">☰</span>
           </button>
-          <div className="ml-auto flex items-center gap-1">
+          <div className="ml-auto flex items-center gap-2">
             <button
               type="button"
               onClick={() => setAiOpen(true)}
@@ -129,7 +129,7 @@ export default function DashboardLayout({ navItems, children }) {
               aria-label="Open Skulag Help Center"
               title="Help Center"
             >
-              <span className="text-base font-semibold mr-5" aria-hidden="true">Help?</span>
+              <span className="text-base font-semibold" aria-hidden="true">?</span>
             </button>
             <ThemeSwitcher />
             <OfflineIndicator />
@@ -140,6 +140,28 @@ export default function DashboardLayout({ navItems, children }) {
       </main>
       {helpOpen && <HelpCenter onClose={() => setHelpOpen(false)} />}
       {aiOpen && <SkulagAIAssistant onClose={() => setAiOpen(false)} />}
+
+      {!aiOpen && (
+        <button
+          type="button"
+          onClick={() => setAiOpen(true)}
+          className="fixed right-5 bottom-5 z-[60] group flex items-center gap-2"
+          aria-label="Ask Skulag AI"
+          title="Ask Skulag AI"
+        >
+          <span className="rounded-full bg-surface border border-border shadow-lg px-3 py-2 text-xs font-semibold text-ink opacity-0 translate-x-2 pointer-events-none transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 sm:opacity-100 sm:translate-x-0 sm:pointer-events-auto">
+            Ask me
+          </span>
+          <span className="relative flex items-center justify-center w-14 h-14 rounded-full bg-primary text-white shadow-xl hover:scale-105 transition-transform">
+            <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" aria-hidden="true" />
+            <img
+              src={BRAND.faviconPath}
+              alt=""
+              className="relative w-8 h-8 object-contain brightness-0 invert animate-bounce"
+            />
+          </span>
+        </button>
+      )}
     </div>
   );
 }
