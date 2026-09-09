@@ -5,32 +5,18 @@ import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
 import ThemeSwitcher from './ThemeSwitcher';
 import HelpCenter from './HelpCenter';
+import SkulagAIAssistant from './SkulagAIAssistant';
 import OfflineIndicator from './OfflineIndicator';
 import BranchSwitcher from './BranchSwitcher';
 import * as announcementsApi from '../api/announcements';
 import { BRAND } from '../config/brand';
 
-/**
- * The shell every dashboard renders inside: a sidebar with nav links
- * specific to the current role, a topbar with the school name / user
- * menu, and a content area. `navItems` is passed in per-dashboard
- * since each role sees different sections — this component only
- * handles the chrome, not the role logic.
- *
- * Responsive pattern: below the `md` breakpoint the sidebar becomes
- * an off-canvas drawer (fixed, slides in from the left, dark backdrop
- * behind it) opened via a hamburger button in the topbar, instead of
- * always eating ~40% of a phone's width. At `md` and above it's back
- * to a normal static sidebar and the hamburger disappears.
- */
 export default function DashboardLayout({ navItems, children }) {
   const { user, school, roles, logout, hasRole } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
 
-  // Shares its query key with AnnouncementsPage — reading an item
-  // there invalidates this too, so the badge clears itself without
-  // needing its own separate "did they read it" plumbing.
   const { data: announcementsData } = useQuery({
     queryKey: ['announcements'],
     queryFn: announcementsApi.getAnnouncements,
@@ -99,8 +85,6 @@ export default function DashboardLayout({ navItems, children }) {
 
   return (
     <div className="min-h-screen flex bg-bg">
-      {/* Mobile backdrop — only rendered (and only intercepts clicks)
-          while the drawer is open */}
       {mobileNavOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-40 md:hidden"
@@ -130,6 +114,16 @@ export default function DashboardLayout({ navItems, children }) {
           <div className="ml-auto flex items-center gap-1">
             <button
               type="button"
+              onClick={() => setAiOpen(true)}
+              className="h-9 px-3 flex items-center justify-center gap-1.5 rounded-lg text-primary bg-primary-soft hover:bg-primary/15 transition-colors"
+              aria-label="Open Ask Skulag AI"
+              title="Ask Skulag AI"
+            >
+              <span aria-hidden="true">✦</span>
+              <span className="text-xs font-semibold">Ask AI</span>
+            </button>
+            <button
+              type="button"
               onClick={() => setHelpOpen(true)}
               className="w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:bg-bg hover:text-ink transition-colors"
               aria-label="Open Skulag Help Center"
@@ -145,6 +139,7 @@ export default function DashboardLayout({ navItems, children }) {
         <div className="flex-1 min-w-0">{children}</div>
       </main>
       {helpOpen && <HelpCenter onClose={() => setHelpOpen(false)} />}
+      {aiOpen && <SkulagAIAssistant onClose={() => setAiOpen(false)} />}
     </div>
   );
 }
