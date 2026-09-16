@@ -7,6 +7,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import ChangePasswordCard from '../../components/ChangePasswordCard';
 import { Field, Input } from '../../components/ui/FormFields';
+import BiometricLoginCard from '../../components/BiometricLoginCard';
 
 export default function AccountSettingsPage() {
   const { user, refreshCurrentUser } = useAuth();
@@ -44,6 +45,7 @@ export default function AccountSettingsPage() {
           </form>
         </Card>
         <ChangePasswordCard />
+        <BiometricLoginCard />
       </div>
     </>
   );

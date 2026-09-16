@@ -38,4 +38,9 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Fingerprint/face unlock only — a "normal" permission, granted
+         automatically at install with no runtime prompt. No camera or
+         location permission is needed for this: biometric matching happens
+         entirely inside the OS, Skulag never sees the biometric data. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 </manifest>

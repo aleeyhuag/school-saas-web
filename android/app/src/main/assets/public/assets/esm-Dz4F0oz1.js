@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/web-N-nQdcKc.js","assets/index-BfxHGREt.js","assets/index-_GhZrYz1.css"])))=>i.map(i=>d[i]);
+import{i as e,t}from"./index-BfxHGREt.js";var n=e(`SecureStoragePlugin`,{web:()=>t(()=>import(`./web-N-nQdcKc.js`).then(e=>new e.SecureStoragePluginWeb),__vite__mapDeps([0,1,2]))});export{n as SecureStoragePlugin};

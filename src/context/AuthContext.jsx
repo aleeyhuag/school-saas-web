@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import * as authApi from '../api/auth';
 import * as branchesApi from '../api/branches';
+import * as biometric from '../lib/biometric';
 
 const AuthContext = createContext(null);
 
@@ -13,6 +14,23 @@ export function AuthProvider({ children }) {
   const [billingLocked, setBillingLocked] = useState(false);
   const [accessibleSchools, setAccessibleSchools] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Device-local, not account state: whether THIS phone has usable biometric
+  // hardware, and whether the current user has opted in on THIS phone.
+  const [biometricSupported, setBiometricSupported] = useState(false);
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { isAvailable } = await biometric.checkBiometricAvailability();
+      const enabled = await biometric.isBiometricLoginEnabled();
+      if (!cancelled) {
+        setBiometricSupported(isAvailable);
+        setBiometricEnabled(enabled);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     const handleBillingLock = () => {
@@ -74,6 +92,34 @@ export function AuthProvider({ children }) {
     setAccessibleSchools(me.accessible_schools ?? []);
   }
 
+  /**
+   * Opt the current user in to fingerprint/face unlock on this device.
+   * Must be called with a token this user is currently authenticated with
+   * (i.e. right after a normal password login).
+   */
+  async function enableBiometricLogin() {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('You must be logged in to enable this.');
+    await biometric.enableBiometricLogin(token);
+    setBiometricEnabled(true);
+  }
+
+  async function disableBiometricLogin() {
+    await biometric.disableBiometricLogin();
+    setBiometricEnabled(false);
+  }
+
+  /**
+   * Prompts the device fingerprint/face dialog and, on success, restores
+   * the session from the token that was saved when the user opted in.
+   * Throws on cancel/failure — callers should fall back to the password
+   * form rather than surfacing this as a network error.
+   */
+  async function loginWithBiometrics() {
+    const token = await biometric.authenticateAndGetToken();
+    await hydrateFromToken(token);
+  }
+
   async function refreshAccessibleSchools() {
     const me = await authApi.fetchCurrentUser();
     setUser(me.user);
@@ -108,6 +154,11 @@ export function AuthProvider({ children }) {
       await authApi.logout();
     } finally {
       localStorage.removeItem('token');
+      // An explicit logout should also retire the biometric-unlock token on
+      // this device — otherwise a fingerprint would keep unlocking a session
+      // the user just intentionally ended. Re-enabling next login is one tap.
+      await biometric.disableBiometricLogin();
+      setBiometricEnabled(false);
       setUser(null);
       setSchool(null);
       setRoles([]);
@@ -128,6 +179,7 @@ export function AuthProvider({ children }) {
         user, school, roles, accessibleSchools, billingLocked, loading,
         login, logout, hydrateFromToken, switchBranch, refreshAccessibleSchools, refreshCurrentUser, hasRole,
         isAuthenticated: !!user,
+        biometricSupported, biometricEnabled, enableBiometricLogin, disableBiometricLogin, loginWithBiometrics,
       }}
     >
       {children}

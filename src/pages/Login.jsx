@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
@@ -6,9 +6,40 @@ import { Field, Input } from '../components/ui/FormFields';
 import { BRAND } from '../config/brand';
 
 export default function Login() {
-  const { login, logout } = useAuth();
+  const { login, logout, biometricSupported, biometricEnabled, loginWithBiometrics } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [biometricBusy, setBiometricBusy] = useState(false);
+  const [biometricError, setBiometricError] = useState(null);
+
+  // Offer fingerprint/face unlock automatically as soon as the login screen
+  // opens, but only if the user has opted in on this device before. Failure
+  // or cancellation just falls back to the password form below — it's never
+  // treated as an error state.
+  useEffect(() => {
+    if (!biometricSupported || !biometricEnabled) return;
+    let cancelled = false;
+    setBiometricBusy(true);
+    loginWithBiometrics()
+      .then(() => { if (!cancelled) navigate('/'); })
+      .catch((err) => { if (!cancelled) setBiometricError(err?.message ?? null); })
+      .finally(() => { if (!cancelled) setBiometricBusy(false); });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [biometricSupported, biometricEnabled]);
+
+  async function handleBiometricRetry() {
+    setBiometricError(null);
+    setBiometricBusy(true);
+    try {
+      await loginWithBiometrics();
+      navigate('/');
+    } catch (err) {
+      setBiometricError(err?.message ?? null);
+    } finally {
+      setBiometricBusy(false);
+    }
+  }
   const reason = searchParams.get('reason');
   const REASON_MESSAGES = {
     trial_expired: 'Your free trial has ended. Subscribe to keep access.',
@@ -83,6 +114,26 @@ export default function Login() {
         <p className="text-sm text-muted mb-6">Access your school dashboard</p>
         {disabledSchoolMessage && !error && <div className="mb-4 text-sm text-warning bg-warning-soft border border-warning/20 rounded-lg px-3 py-2">{disabledSchoolMessage}</div>}
         {error && <div className="mb-4 text-sm text-danger bg-danger-soft border border-danger/20 rounded-lg px-3 py-2">{error}</div>}
+        {biometricSupported && biometricEnabled && (
+          <div className="mb-5">
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              onClick={handleBiometricRetry}
+              disabled={biometricBusy}
+              loading={biometricBusy}
+            >
+              {biometricBusy ? 'Waiting for fingerprint / face…' : 'Unlock with fingerprint / face'}
+            </Button>
+            {biometricError && <p className="text-xs text-danger text-center mt-2">{biometricError}</p>}
+            <div className="flex items-center gap-3 mt-5">
+              <div className="h-px bg-border flex-1" />
+              <span className="text-xs text-muted">or sign in with password</span>
+              <div className="h-px bg-border flex-1" />
+            </div>
+          </div>
+        )}
         <Field label="Email"><Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@school.com" /></Field>
         <Field label="Password"><Input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" /></Field>
         {schoolChoices.length > 0 && (
