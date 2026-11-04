@@ -33,9 +33,12 @@ export function forgotPassword(email) {
   return api.post('/auth/forgot-password', { email }).then((res) => res.data);
 }
 
-export function resetPassword({ token, email, password, password_confirmation }) {
+// The API requires `user_id` (and uses `setup` to choose the account_setup
+// token type for invite links). Both come from the emailed link and must be
+// forwarded, otherwise every setup/reset fails with "The user id field is required."
+export function resetPassword({ token, email, user_id, setup, password, password_confirmation }) {
   return api
-    .post('/auth/reset-password', { token, email, password, password_confirmation })
+    .post('/auth/reset-password', { token, email, user_id, setup, password, password_confirmation })
     .then((res) => res.data);
 }
 
