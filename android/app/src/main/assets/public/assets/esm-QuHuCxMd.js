@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/web-CuNrLsek.js","assets/index--rV_2ahv.js","assets/index-CYarO4jZ.css"])))=>i.map(i=>d[i]);
+import{i as e,t}from"./index--rV_2ahv.js";var n=e(`SecureStoragePlugin`,{web:()=>t(()=>import(`./web-CuNrLsek.js`).then(e=>new e.SecureStoragePluginWeb),__vite__mapDeps([0,1,2]))});export{n as SecureStoragePlugin};
