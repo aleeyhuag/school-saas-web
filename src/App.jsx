@@ -1,91 +1,107 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import RegisterSchool from './pages/RegisterSchool';
-import EnrollPage from './pages/EnrollPage';
 import Home from './routes/Home';
-import SuperAdminDashboard from './pages/SuperAdminDashboard';
-import SchoolsPage from './pages/super-admin/SchoolsPage';
-import SchoolDetailPage from './pages/super-admin/SchoolDetailPage';
-import SuperAdminsPage from './pages/super-admin/SuperAdminsPage';
 import NotFoundPage from './pages/NotFoundPage';
-import PlatformLeadsPage from './pages/super-admin/PlatformLeadsPage';
-import PlatformCampaignsPage from './pages/super-admin/PlatformCampaignsPage';
-import ReferralPartnersPage from './pages/super-admin/ReferralPartnersPage';
-import PlatformStatsPage from './pages/super-admin/PlatformStatsPage';
-import PlatformBillingPage from './pages/super-admin/PlatformBillingPage';
-import SuperAdminBackupPage from './pages/super-admin/SuperAdminBackupPage';
-import ProprietorDashboard from './pages/ProprietorDashboard';
-import OverviewPage from './pages/proprietor/OverviewPage';
-import ClassesAndSubjectsPage from './pages/proprietor/ClassesAndSubjectsPage';
-import StudentsPage from './pages/proprietor/StudentsPage';
-import StaffPage from './pages/proprietor/StaffPage';
-import TeacherAssignmentsPage from './pages/proprietor/TeacherAssignmentsPage';
-import SessionsAndTermsPage from './pages/proprietor/SessionsAndTermsPage';
-import FeesPage from './pages/proprietor/FeesPage';
-import SettingsPage from './pages/proprietor/SettingsPage';
-import ParentsPage from './pages/shared/ParentsPage';
-import PrincipalDashboard from './pages/PrincipalDashboard';
-import ExamOfficerDashboard from './pages/ExamOfficerDashboard';
-import BursarDashboard from './pages/BursarDashboard';
-import BursarSettingsPage from './pages/bursar/BursarSettingsPage';
-import GradingSettingsPage from './pages/exam-officer/GradingSettingsPage';
-import TeacherDashboard from './pages/TeacherDashboard';
-import ClassTeacherAttendancePage from './pages/class-teacher/ClassTeacherAttendancePage';
-import ClassTeacherMarksheetPage from './pages/class-teacher/ClassTeacherMarksheetPage';
-import ScoreEntryPage from './pages/subject-teacher/ScoreEntryPage';
-import ParentDashboard from './pages/ParentDashboard';
-import ParentChildrenPage from './pages/parent/ParentChildrenPage';
-import StudentDashboard from './pages/StudentDashboard';
-import StudentOverviewPage from './pages/student/StudentOverviewPage';
 import ProtectedRoute from './routes/ProtectedRoute';
-import ClassTimetablePage from './pages/principal/ClassTimetablePage';
-import ExamTimetablePage from './pages/exam-officer/ExamTimetablePage';
-import TimetableViewPage from './pages/shared/TimetableViewPage';
-import ExamTimetableViewPage from './pages/shared/ExamTimetableViewPage';
-import ResultsExportPage from './pages/shared/ResultsExportPage';
-import AnnouncementsPage from './pages/shared/AnnouncementsPage';
-import AuditLogsPage from './pages/shared/AuditLogsPage';
-import AccountSettingsPage from './pages/shared/AccountSettingsPage';
-import SchoolHealthPage from './pages/shared/SchoolHealthPage';
-import BillingPage from './pages/proprietor/BillingPage';
-import BackupPage from './pages/proprietor/BackupPage';
-import IdCardsPage from './pages/shared/IdCardsPage';
-import IdCardPreviewPage from './pages/shared/IdCardPreviewPage';
-import IdCardBulkPrintPage from './pages/shared/IdCardBulkPrintPage';
-import CbtManagementPage from './pages/shared/CbtManagementPage';
-import StudentCbtPage from './pages/student/StudentCbtPage';
-import MyClassPage from './pages/class-teacher/MyClassPage';
-import EnrollmentApplicationsPage from './pages/proprietor/EnrollmentApplicationsPage';
-import PromotionPage from './pages/proprietor/PromotionPage';
-import Contact from './pages/Contact';
-import Terms from './pages/Terms';
-import Privacy from './pages/Privacy';
-import HelpPage from './pages/HelpPage';
-import ReferralPartnersPublic from './pages/ReferralPartnersPublic';
-import PartnerLogin from './pages/PartnerLogin';
-import PartnerDashboard from './pages/PartnerDashboard';
-import ReferralPartnerDetailPage from './pages/super-admin/ReferralPartnerDetailPage';
-import TeachingLandingRedirect from './pages/TeachingLandingRedirect';
+
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const RegisterSchool = lazy(() => import('./pages/RegisterSchool'));
+const EnrollPage = lazy(() => import('./pages/EnrollPage'));
+const SuperAdminDashboard = lazy(() => import('./pages/SuperAdminDashboard'));
+const SchoolsPage = lazy(() => import('./pages/super-admin/SchoolsPage'));
+const SchoolDetailPage = lazy(() => import('./pages/super-admin/SchoolDetailPage'));
+const SuperAdminsPage = lazy(() => import('./pages/super-admin/SuperAdminsPage'));
+const PlatformLeadsPage = lazy(() => import('./pages/super-admin/PlatformLeadsPage'));
+const PlatformCampaignsPage = lazy(() => import('./pages/super-admin/PlatformCampaignsPage'));
+const ReferralPartnersPage = lazy(() => import('./pages/super-admin/ReferralPartnersPage'));
+const PlatformStatsPage = lazy(() => import('./pages/super-admin/PlatformStatsPage'));
+const PlatformBillingPage = lazy(() => import('./pages/super-admin/PlatformBillingPage'));
+const SuperAdminBackupPage = lazy(() => import('./pages/super-admin/SuperAdminBackupPage'));
+const ProprietorDashboard = lazy(() => import('./pages/ProprietorDashboard'));
+const OverviewPage = lazy(() => import('./pages/proprietor/OverviewPage'));
+const ClassesAndSubjectsPage = lazy(() => import('./pages/proprietor/ClassesAndSubjectsPage'));
+const StudentsPage = lazy(() => import('./pages/proprietor/StudentsPage'));
+const StaffPage = lazy(() => import('./pages/proprietor/StaffPage'));
+const TeacherAssignmentsPage = lazy(() => import('./pages/proprietor/TeacherAssignmentsPage'));
+const SessionsAndTermsPage = lazy(() => import('./pages/proprietor/SessionsAndTermsPage'));
+const FeesPage = lazy(() => import('./pages/proprietor/FeesPage'));
+const SettingsPage = lazy(() => import('./pages/proprietor/SettingsPage'));
+const ParentsPage = lazy(() => import('./pages/shared/ParentsPage'));
+const PrincipalDashboard = lazy(() => import('./pages/PrincipalDashboard'));
+const ExamOfficerDashboard = lazy(() => import('./pages/ExamOfficerDashboard'));
+const BursarDashboard = lazy(() => import('./pages/BursarDashboard'));
+const BursarSettingsPage = lazy(() => import('./pages/bursar/BursarSettingsPage'));
+const GradingSettingsPage = lazy(() => import('./pages/exam-officer/GradingSettingsPage'));
+const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard'));
+const ClassTeacherAttendancePage = lazy(() => import('./pages/class-teacher/ClassTeacherAttendancePage'));
+const ClassTeacherMarksheetPage = lazy(() => import('./pages/class-teacher/ClassTeacherMarksheetPage'));
+const ScoreEntryPage = lazy(() => import('./pages/subject-teacher/ScoreEntryPage'));
+const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
+const ParentChildrenPage = lazy(() => import('./pages/parent/ParentChildrenPage'));
+const StudentDashboard = lazy(() => import('./pages/StudentDashboard'));
+const StudentOverviewPage = lazy(() => import('./pages/student/StudentOverviewPage'));
+const ClassTimetablePage = lazy(() => import('./pages/principal/ClassTimetablePage'));
+const ExamTimetablePage = lazy(() => import('./pages/exam-officer/ExamTimetablePage'));
+const TimetableViewPage = lazy(() => import('./pages/shared/TimetableViewPage'));
+const ExamTimetableViewPage = lazy(() => import('./pages/shared/ExamTimetableViewPage'));
+const ResultsExportPage = lazy(() => import('./pages/shared/ResultsExportPage'));
+const AnnouncementsPage = lazy(() => import('./pages/shared/AnnouncementsPage'));
+const AuditLogsPage = lazy(() => import('./pages/shared/AuditLogsPage'));
+const AccountSettingsPage = lazy(() => import('./pages/shared/AccountSettingsPage'));
+const SchoolHealthPage = lazy(() => import('./pages/shared/SchoolHealthPage'));
+const BillingPage = lazy(() => import('./pages/proprietor/BillingPage'));
+const BackupPage = lazy(() => import('./pages/proprietor/BackupPage'));
+const IdCardsPage = lazy(() => import('./pages/shared/IdCardsPage'));
+const IdCardPreviewPage = lazy(() => import('./pages/shared/IdCardPreviewPage'));
+const IdCardBulkPrintPage = lazy(() => import('./pages/shared/IdCardBulkPrintPage'));
+const CbtManagementPage = lazy(() => import('./pages/shared/CbtManagementPage'));
+const StudentCbtPage = lazy(() => import('./pages/student/StudentCbtPage'));
+const MyClassPage = lazy(() => import('./pages/class-teacher/MyClassPage'));
+const EnrollmentApplicationsPage = lazy(() => import('./pages/proprietor/EnrollmentApplicationsPage'));
+const PromotionPage = lazy(() => import('./pages/proprietor/PromotionPage'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const HelpPage = lazy(() => import('./pages/HelpPage'));
+const ReferralPartnersPublic = lazy(() => import('./pages/ReferralPartnersPublic'));
+const PartnerLogin = lazy(() => import('./pages/PartnerLogin'));
+const PartnerDashboard = lazy(() => import('./pages/PartnerDashboard'));
+const ReferralPartnerDetailPage = lazy(() => import('./pages/super-admin/ReferralPartnerDetailPage'));
+const TeachingLandingRedirect = lazy(() => import('./pages/TeachingLandingRedirect'));
+
+/**
+ * Every page below is loaded on demand (React.lazy) instead of being packed
+ * into one big file that every visitor downloads up front. A proprietor no
+ * longer downloads the super-admin, CBT or referral screens just to open the
+ * dashboard — the first load is much smaller, which matters on weak networks.
+ */
+function PageLoading() {
+  return <div className="p-6 text-sm text-muted">Loading…</div>;
+}
+
+function Page({ children }) {
+  return <Suspense fallback={<PageLoading />}>{children}</Suspense>;
+}
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/register-school" element={<RegisterSchool />} />
-        <Route path="/enroll/:slug" element={<EnrollPage />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/help" element={<HelpPage />} />
-        <Route path="/referrals" element={<ReferralPartnersPublic />} />
-        <Route path="/partner/register" element={<ReferralPartnersPublic />} />
-        <Route path="/partner/login" element={<PartnerLogin />} />
-        <Route path="/partner/dashboard" element={<PartnerDashboard />} />
+        <Route path="/forgot-password" element={<Page><ForgotPassword /></Page>} />
+        <Route path="/reset-password" element={<Page><ResetPassword /></Page>} />
+        <Route path="/register-school" element={<Page><RegisterSchool /></Page>} />
+        <Route path="/enroll/:slug" element={<Page><EnrollPage /></Page>} />
+        <Route path="/contact" element={<Page><Contact /></Page>} />
+        <Route path="/terms" element={<Page><Terms /></Page>} />
+        <Route path="/privacy" element={<Page><Privacy /></Page>} />
+        <Route path="/help" element={<Page><HelpPage /></Page>} />
+        <Route path="/referrals" element={<Page><ReferralPartnersPublic /></Page>} />
+        <Route path="/partner/register" element={<Page><ReferralPartnersPublic /></Page>} />
+        <Route path="/partner/login" element={<Page><PartnerLogin /></Page>} />
+        <Route path="/partner/dashboard" element={<Page><PartnerDashboard /></Page>} />
 
         {/* "/" is the site's actual homepage — an anonymous visitor
             sees the marketing Landing page; a signed-in user is
@@ -96,21 +112,21 @@ export default function App() {
           path="/super-admin"
           element={
             <ProtectedRoute allowedRoles={['super_admin']}>
-              <SuperAdminDashboard />
+              <Suspense fallback={<PageLoading />}><SuperAdminDashboard /></Suspense>
             </ProtectedRoute>
           }
         >
-          <Route index element={<SchoolsPage />} />
-          <Route path="schools/:schoolId" element={<SchoolDetailPage />} />
-          <Route path="stats" element={<PlatformStatsPage />} />
-          <Route path="billing" element={<PlatformBillingPage />} />
-          <Route path="backup" element={<SuperAdminBackupPage />} />
-          <Route path="admins" element={<SuperAdminsPage />} />
-          <Route path="leads" element={<PlatformLeadsPage />} />
-          <Route path="campaigns" element={<PlatformCampaignsPage />} />
-          <Route path="referrals" element={<ReferralPartnersPage />} />
-          <Route path="referrals/:partnerId" element={<ReferralPartnerDetailPage />} />
-          <Route path="settings" element={<AccountSettingsPage />} />
+          <Route index element={<Page><SchoolsPage /></Page>} />
+          <Route path="schools/:schoolId" element={<Page><SchoolDetailPage /></Page>} />
+          <Route path="stats" element={<Page><PlatformStatsPage /></Page>} />
+          <Route path="billing" element={<Page><PlatformBillingPage /></Page>} />
+          <Route path="backup" element={<Page><SuperAdminBackupPage /></Page>} />
+          <Route path="admins" element={<Page><SuperAdminsPage /></Page>} />
+          <Route path="leads" element={<Page><PlatformLeadsPage /></Page>} />
+          <Route path="campaigns" element={<Page><PlatformCampaignsPage /></Page>} />
+          <Route path="referrals" element={<Page><ReferralPartnersPage /></Page>} />
+          <Route path="referrals/:partnerId" element={<Page><ReferralPartnerDetailPage /></Page>} />
+          <Route path="settings" element={<Page><AccountSettingsPage /></Page>} />
         </Route>
 
         {/* Proprietor: a layout shell (sidebar) with nested sub-pages —
@@ -120,117 +136,117 @@ export default function App() {
           path="/proprietor"
           element={
             <ProtectedRoute allowedRoles={['proprietor']}>
-              <ProprietorDashboard />
+              <Suspense fallback={<PageLoading />}><ProprietorDashboard /></Suspense>
             </ProtectedRoute>
           }
         >
-          <Route index element={<OverviewPage />} />
-          <Route path="classes-subjects" element={<ClassesAndSubjectsPage />} />
-          <Route path="students" element={<StudentsPage />} />
-          <Route path="enrollment-applications" element={<EnrollmentApplicationsPage />} />
-          <Route path="staff" element={<StaffPage />} />
-          <Route path="parents" element={<ParentsPage />} />
-          <Route path="teacher-assignments" element={<TeacherAssignmentsPage />} />
-          <Route path="sessions-terms" element={<SessionsAndTermsPage />} />
-          <Route path="fees" element={<FeesPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="timetable" element={<TimetableViewPage />} />
-          <Route path="exam-timetable" element={<ExamTimetableViewPage />} />
-          <Route path="results-export" element={<ResultsExportPage />} />
-          <Route path="announcements" element={<AnnouncementsPage />} />
-          <Route path="school-health" element={<SchoolHealthPage />} />
-          <Route path="billing" element={<BillingPage />} />
-          <Route path="backup" element={<BackupPage />} />
-          <Route path="audit" element={<AuditLogsPage />} />
-          <Route path="my-class" element={<MyClassPage />} />
+          <Route index element={<Page><OverviewPage /></Page>} />
+          <Route path="classes-subjects" element={<Page><ClassesAndSubjectsPage /></Page>} />
+          <Route path="students" element={<Page><StudentsPage /></Page>} />
+          <Route path="enrollment-applications" element={<Page><EnrollmentApplicationsPage /></Page>} />
+          <Route path="staff" element={<Page><StaffPage /></Page>} />
+          <Route path="parents" element={<Page><ParentsPage /></Page>} />
+          <Route path="teacher-assignments" element={<Page><TeacherAssignmentsPage /></Page>} />
+          <Route path="sessions-terms" element={<Page><SessionsAndTermsPage /></Page>} />
+          <Route path="fees" element={<Page><FeesPage /></Page>} />
+          <Route path="settings" element={<Page><SettingsPage /></Page>} />
+          <Route path="timetable" element={<Page><TimetableViewPage /></Page>} />
+          <Route path="exam-timetable" element={<Page><ExamTimetableViewPage /></Page>} />
+          <Route path="results-export" element={<Page><ResultsExportPage /></Page>} />
+          <Route path="announcements" element={<Page><AnnouncementsPage /></Page>} />
+          <Route path="school-health" element={<Page><SchoolHealthPage /></Page>} />
+          <Route path="billing" element={<Page><BillingPage /></Page>} />
+          <Route path="backup" element={<Page><BackupPage /></Page>} />
+          <Route path="audit" element={<Page><AuditLogsPage /></Page>} />
+          <Route path="my-class" element={<Page><MyClassPage /></Page>} />
         </Route>
 
         <Route
           path="/principal"
           element={
             <ProtectedRoute allowedRoles={['principal']}>
-              <PrincipalDashboard />
+              <Suspense fallback={<PageLoading />}><PrincipalDashboard /></Suspense>
             </ProtectedRoute>
           }
         >
-          <Route index element={<OverviewPage />} />
-          <Route path="classes-subjects" element={<ClassesAndSubjectsPage />} />
-          <Route path="students" element={<StudentsPage />} />
-          <Route path="enrollment-applications" element={<EnrollmentApplicationsPage />} />
-          <Route path="promotion" element={<PromotionPage />} />
-          <Route path="staff" element={<StaffPage />} />
-          <Route path="parents" element={<ParentsPage />} />
-          <Route path="teacher-assignments" element={<TeacherAssignmentsPage />} />
-          <Route path="sessions-terms" element={<SessionsAndTermsPage />} />
-          <Route path="fees" element={<FeesPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="timetable" element={<ClassTimetablePage />} />
-          <Route path="exam-timetable" element={<ExamTimetableViewPage />} />
-          <Route path="results-export" element={<ResultsExportPage />} />
-          <Route path="announcements" element={<AnnouncementsPage />} />
-          <Route path="school-health" element={<SchoolHealthPage />} />
-          <Route path="billing" element={<BillingPage />} />
-          <Route path="backup" element={<BackupPage />} />
-          <Route path="id-cards" element={<IdCardsPage />} />
-          <Route path="id-cards/:studentId/preview" element={<IdCardPreviewPage />} />
-          <Route path="id-cards/bulk-print" element={<IdCardBulkPrintPage />} />
-          <Route path="audit" element={<AuditLogsPage />} />
-          <Route path="my-class" element={<MyClassPage />} />
+          <Route index element={<Page><OverviewPage /></Page>} />
+          <Route path="classes-subjects" element={<Page><ClassesAndSubjectsPage /></Page>} />
+          <Route path="students" element={<Page><StudentsPage /></Page>} />
+          <Route path="enrollment-applications" element={<Page><EnrollmentApplicationsPage /></Page>} />
+          <Route path="promotion" element={<Page><PromotionPage /></Page>} />
+          <Route path="staff" element={<Page><StaffPage /></Page>} />
+          <Route path="parents" element={<Page><ParentsPage /></Page>} />
+          <Route path="teacher-assignments" element={<Page><TeacherAssignmentsPage /></Page>} />
+          <Route path="sessions-terms" element={<Page><SessionsAndTermsPage /></Page>} />
+          <Route path="fees" element={<Page><FeesPage /></Page>} />
+          <Route path="settings" element={<Page><SettingsPage /></Page>} />
+          <Route path="timetable" element={<Page><ClassTimetablePage /></Page>} />
+          <Route path="exam-timetable" element={<Page><ExamTimetableViewPage /></Page>} />
+          <Route path="results-export" element={<Page><ResultsExportPage /></Page>} />
+          <Route path="announcements" element={<Page><AnnouncementsPage /></Page>} />
+          <Route path="school-health" element={<Page><SchoolHealthPage /></Page>} />
+          <Route path="billing" element={<Page><BillingPage /></Page>} />
+          <Route path="backup" element={<Page><BackupPage /></Page>} />
+          <Route path="id-cards" element={<Page><IdCardsPage /></Page>} />
+          <Route path="id-cards/:studentId/preview" element={<Page><IdCardPreviewPage /></Page>} />
+          <Route path="id-cards/bulk-print" element={<Page><IdCardBulkPrintPage /></Page>} />
+          <Route path="audit" element={<Page><AuditLogsPage /></Page>} />
+          <Route path="my-class" element={<Page><MyClassPage /></Page>} />
         </Route>
 
         <Route
           path="/exam-officer"
           element={
             <ProtectedRoute allowedRoles={['exam_officer']}>
-              <ExamOfficerDashboard />
+              <Suspense fallback={<PageLoading />}><ExamOfficerDashboard /></Suspense>
             </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="grading-settings" replace />} />
-          <Route path="grading-settings" element={<GradingSettingsPage />} />
-          <Route path="settings" element={<BursarSettingsPage />} />
-          <Route path="timetable" element={<TimetableViewPage />} />
-          <Route path="exam-timetable" element={<ExamTimetablePage />} />
-          <Route path="cbt" element={<CbtManagementPage />} />
-          <Route path="results-export" element={<ResultsExportPage />} />
-          <Route path="announcements" element={<AnnouncementsPage />} />
-          <Route path="my-class" element={<MyClassPage />} />
+          <Route path="grading-settings" element={<Page><GradingSettingsPage /></Page>} />
+          <Route path="settings" element={<Page><BursarSettingsPage /></Page>} />
+          <Route path="timetable" element={<Page><TimetableViewPage /></Page>} />
+          <Route path="exam-timetable" element={<Page><ExamTimetablePage /></Page>} />
+          <Route path="cbt" element={<Page><CbtManagementPage /></Page>} />
+          <Route path="results-export" element={<Page><ResultsExportPage /></Page>} />
+          <Route path="announcements" element={<Page><AnnouncementsPage /></Page>} />
+          <Route path="my-class" element={<Page><MyClassPage /></Page>} />
         </Route>
 
         <Route
           path="/bursar"
           element={
             <ProtectedRoute allowedRoles={['bursar']}>
-              <BursarDashboard />
+              <Suspense fallback={<PageLoading />}><BursarDashboard /></Suspense>
             </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="fees" replace />} />
-          <Route path="fees" element={<FeesPage />} />
-          <Route path="parents" element={<ParentsPage />} />
-          <Route path="settings" element={<BursarSettingsPage />} />
-          <Route path="announcements" element={<AnnouncementsPage />} />
-          <Route path="my-class" element={<MyClassPage />} />
+          <Route path="fees" element={<Page><FeesPage /></Page>} />
+          <Route path="parents" element={<Page><ParentsPage /></Page>} />
+          <Route path="settings" element={<Page><BursarSettingsPage /></Page>} />
+          <Route path="announcements" element={<Page><AnnouncementsPage /></Page>} />
+          <Route path="my-class" element={<Page><MyClassPage /></Page>} />
         </Route>
 
         <Route 
           path="/teaching" 
           element={
             <ProtectedRoute allowedRoles={['teacher']}>
-              <TeacherDashboard />
+              <Suspense fallback={<PageLoading />}><TeacherDashboard /></Suspense>
             </ProtectedRoute>
           }
         >
-          <Route index element={<TeachingLandingRedirect />} />
-          <Route path="attendance" element={<ClassTeacherAttendancePage />} />
-          <Route path="my-class" element={<MyClassPage />} />
-          <Route path="marksheet" element={<ClassTeacherMarksheetPage />} />
-          <Route path="scores" element={<ScoreEntryPage />} />
-          <Route path="cbt" element={<CbtManagementPage />} />
-          <Route path="settings" element={<BursarSettingsPage />} />
-          <Route path="timetable" element={<TimetableViewPage />} />
-          <Route path="exam-timetable" element={<ExamTimetableViewPage />} />
-          <Route path="announcements" element={<AnnouncementsPage />} />
+          <Route index element={<Page><TeachingLandingRedirect /></Page>} />
+          <Route path="attendance" element={<Page><ClassTeacherAttendancePage /></Page>} />
+          <Route path="my-class" element={<Page><MyClassPage /></Page>} />
+          <Route path="marksheet" element={<Page><ClassTeacherMarksheetPage /></Page>} />
+          <Route path="scores" element={<Page><ScoreEntryPage /></Page>} />
+          <Route path="cbt" element={<Page><CbtManagementPage /></Page>} />
+          <Route path="settings" element={<Page><BursarSettingsPage /></Page>} />
+          <Route path="timetable" element={<Page><TimetableViewPage /></Page>} />
+          <Route path="exam-timetable" element={<Page><ExamTimetableViewPage /></Page>} />
+          <Route path="announcements" element={<Page><AnnouncementsPage /></Page>} />
         </Route>
 
         <Route path="/teacher" element={<Navigate to="/teaching" replace />} />
@@ -239,33 +255,33 @@ export default function App() {
           path="/parent"
           element={
             <ProtectedRoute allowedRoles={['parent']}>
-              <ParentDashboard />
+              <Suspense fallback={<PageLoading />}><ParentDashboard /></Suspense>
             </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="children" replace />} />
-          <Route path="children" element={<ParentChildrenPage />} />
-          <Route path="settings" element={<BursarSettingsPage />} />
-          <Route path="timetable" element={<TimetableViewPage />} />
-          <Route path="exam-timetable" element={<ExamTimetableViewPage />} />
-          <Route path="announcements" element={<AnnouncementsPage />} />
+          <Route path="children" element={<Page><ParentChildrenPage /></Page>} />
+          <Route path="settings" element={<Page><BursarSettingsPage /></Page>} />
+          <Route path="timetable" element={<Page><TimetableViewPage /></Page>} />
+          <Route path="exam-timetable" element={<Page><ExamTimetableViewPage /></Page>} />
+          <Route path="announcements" element={<Page><AnnouncementsPage /></Page>} />
         </Route>
 
         <Route
           path="/student"
           element={
             <ProtectedRoute allowedRoles={['student']}>
-              <StudentDashboard />
+              <Suspense fallback={<PageLoading />}><StudentDashboard /></Suspense>
             </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="overview" replace />} />
-          <Route path="overview" element={<StudentOverviewPage />} />
-          <Route path="settings" element={<BursarSettingsPage />} />
-          <Route path="timetable" element={<TimetableViewPage />} />
-          <Route path="exam-timetable" element={<ExamTimetableViewPage />} />
-          <Route path="cbt" element={<StudentCbtPage />} />
-          <Route path="announcements" element={<AnnouncementsPage />} />
+          <Route path="overview" element={<Page><StudentOverviewPage /></Page>} />
+          <Route path="settings" element={<Page><BursarSettingsPage /></Page>} />
+          <Route path="timetable" element={<Page><TimetableViewPage /></Page>} />
+          <Route path="exam-timetable" element={<Page><ExamTimetableViewPage /></Page>} />
+          <Route path="cbt" element={<Page><StudentCbtPage /></Page>} />
+          <Route path="announcements" element={<Page><AnnouncementsPage /></Page>} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

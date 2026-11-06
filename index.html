@@ -7,6 +7,25 @@
     <meta name="theme-color" content="#075b43" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Skulag — Smart School. Simple Solutions. Better Future.</title>
+
+    <!-- Fonts load in the background so the page can draw immediately with the
+         system font, then switch when the font arrives. (They used to be an
+         @import at the top of index.css, which blocks the whole page on a slow
+         connection until the font stylesheet has downloaded.) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      />
+    </noscript>
   </head>
   <body>
     <div id="root"></div>
