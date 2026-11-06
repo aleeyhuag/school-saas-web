@@ -173,7 +173,13 @@ export default function ScoreEntryPage() {
     });
   }
 
-  const numberInputClasses = 'w-16 px-2 py-1 border border-border rounded text-sm text-center';
+  // The shared <Input> already sets w-full and px-3, which fight with a narrower
+  // width and squeeze the digits under the browser's up/down arrows. The "!"
+  // forces these sizes to win; the spinner arrows are hidden so a 3-digit score
+  // like 100 always fits.
+  const numberInputClasses =
+    'w-20! min-w-20 px-2! py-1.5! text-center ' +
+    '[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none';
 
   if (!assignmentsQuery.isLoading && subjectAssignments.length === 0) {
     return (
@@ -242,7 +248,7 @@ export default function ScoreEntryPage() {
 
         <Card>
           <div className="overflow-x-auto -mx-5">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[62rem] text-sm">
               <thead>
                 <tr className="border-b border-border text-left text-xs font-medium text-muted uppercase tracking-wide">
                   <th className="px-5 py-2">Student</th>
@@ -264,7 +270,7 @@ export default function ScoreEntryPage() {
                       <td className="px-5 py-2 font-medium text-ink whitespace-nowrap">
                         {student.first_name} {student.last_name}
                       </td>
-                      <td className="px-1 py-2">
+                      <td className="px-2 py-2">
                         <Input
                           disabled={isLocked}
                           type="number"
@@ -273,7 +279,7 @@ export default function ScoreEntryPage() {
                           onChange={(e) => updateRow(student.id, 'ca_score', e.target.value)}
                         />
                       </td>
-                      <td className="px-1 py-2">
+                      <td className="px-2 py-2">
                         <Input
                           disabled={isLocked}
                           type="number"
@@ -282,7 +288,7 @@ export default function ScoreEntryPage() {
                           onChange={(e) => updateRow(student.id, 'ca_max', e.target.value)}
                         />
                       </td>
-                      <td className="px-1 py-2">
+                      <td className="px-2 py-2">
                         <Input
                           disabled={isLocked}
                           type="number"
@@ -291,7 +297,7 @@ export default function ScoreEntryPage() {
                           onChange={(e) => updateRow(student.id, 'assignment_score', e.target.value)}
                         />
                       </td>
-                      <td className="px-1 py-2">
+                      <td className="px-2 py-2">
                         <Input
                           disabled={isLocked}
                           type="number"
@@ -300,7 +306,7 @@ export default function ScoreEntryPage() {
                           onChange={(e) => updateRow(student.id, 'assignment_max', e.target.value)}
                         />
                       </td>
-                      <td className="px-1 py-2">
+                      <td className="px-2 py-2">
                         <Input
                           disabled={isLocked}
                           type="number"
@@ -309,7 +315,7 @@ export default function ScoreEntryPage() {
                           onChange={(e) => updateRow(student.id, 'exam_score', e.target.value)}
                         />
                       </td>
-                      <td className="px-1 py-2">
+                      <td className="px-2 py-2">
                         <Input
                           disabled={isLocked}
                           type="number"
@@ -318,10 +324,10 @@ export default function ScoreEntryPage() {
                           onChange={(e) => updateRow(student.id, 'exam_max', e.target.value)}
                         />
                       </td>
-                      <td className="px-1 py-2">
+                      <td className="px-2 py-2">
                         <Input
                           disabled={isLocked}
-                          className="w-40 px-2 py-1 text-sm"
+                          className="w-48! px-2! py-1.5! text-sm"
                           value={row.teacher_comment}
                           onChange={(e) => updateRow(student.id, 'teacher_comment', e.target.value)}
                           placeholder="Optional"

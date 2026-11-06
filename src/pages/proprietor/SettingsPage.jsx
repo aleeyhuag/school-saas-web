@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import PageHeader from '../../components/PageHeader';
 import ChangePasswordCard from '../../components/ChangePasswordCard';
 import AccountProfileCard from '../../components/AccountProfileCard';
+import BiometricLoginCard from '../../components/BiometricLoginCard';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -38,6 +39,8 @@ export default function SettingsPage() {
         <SchoolProfileCard />
 
         <ChangePasswordCard />
+
+        <BiometricLoginCard />
 
         <Card title="Assessment Weights">
           <p className="text-xs text-muted mb-4">
