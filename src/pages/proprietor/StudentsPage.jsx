@@ -9,6 +9,7 @@ import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
+import StudentLoginSlipsModal from '../../components/StudentLoginSlipsModal';
 import { Field, Input, Select } from '../../components/ui/FormFields';
 
 const EMPTY_FORM = {
@@ -156,6 +157,10 @@ export default function StudentsPage() {
   // ---- Bulk import ----
   const [bulkImportOpen, setBulkImportOpen] = useState(false);
 
+  // ---- Login details (reset password + printable slips) ----
+  const [slipsOpen, setSlipsOpen] = useState(false);
+  const [slipStudents, setSlipStudents] = useState(null); // null = pick a whole class
+
   const columns = [
     {
       key: 'name',
@@ -181,7 +186,22 @@ export default function StudentsPage() {
       label: 'Login',
       render: (row) =>
         row.user ? (
-          <span className="text-xs text-muted">{row.user.email}</span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                setSlipStudents([row]);
+                setSlipsOpen(true);
+              }}
+            >
+              Get login
+            </Button>
+            {/* Only show a real email; the system-generated one is an internal detail. */}
+            {!/students\.local$/.test(row.user.email ?? '') && (
+              <span className="text-xs text-muted">{row.user.email}</span>
+            )}
+          </div>
         ) : (
           <Button
             variant="secondary"
@@ -235,6 +255,15 @@ export default function StudentsPage() {
         description="Manage every student enrolled across your classes."
         action={
           <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setSlipStudents(null);
+                setSlipsOpen(true);
+              }}
+            >
+              Login slips
+            </Button>
             <Button variant="secondary" onClick={() => setBulkImportOpen(true)}>
               Bulk import
             </Button>
@@ -302,13 +331,13 @@ export default function StudentsPage() {
               added — their login was created automatically.
             </p>
             <div className="bg-warning-soft border border-warning/20 rounded-lg p-3 mb-4 space-y-1">
-              <p className="text-xs text-muted">Login email:</p>
-              <p className="font-mono text-sm text-ink break-all">{creationResult.login_email}</p>
+              <p className="text-xs text-muted">Username (admission number):</p>
+              <p className="font-mono text-sm text-ink break-all">{creationResult.student.admission_number}</p>
               {creationResult.setup_link_sent ? (
-                <p className="text-sm text-success mt-2">A secure password setup link was sent to the student's email.</p>
+                <p className="text-sm text-success mt-2">A secure password setup link was sent to {creationResult.login_email}.</p>
               ) : (
                 <>
-                  <p className="text-xs text-muted mt-2">System-generated login — give the student these credentials securely:</p>
+                  <p className="text-xs text-muted mt-2">Give the student these credentials securely. You can always get a new password later with "Get login".</p>
                   <p className="text-xs text-muted mt-2">Temporary password:</p>
                   <p className="font-mono text-sm text-ink">{creationResult.temporary_password}</p>
                 </>
@@ -424,14 +453,23 @@ export default function StudentsPage() {
       <PhotoModal student={photoModalStudent} onClose={() => setPhotoModalStudent(null)} />
       <BulkImportModal open={bulkImportOpen} onClose={() => setBulkImportOpen(false)} />
 
+      {slipsOpen && (
+        <StudentLoginSlipsModal
+          open
+          onClose={() => setSlipsOpen(false)}
+          classes={classesQuery.data ?? []}
+          students={slipStudents}
+        />
+      )}
+
       <Modal open={!!loginRevealResult} onClose={() => setLoginRevealResult(null)} title="Login created">
         {loginRevealResult && (
           <div>
             <p className="text-sm text-ink mb-3">Login created successfully.</p>
             <div className="bg-warning-soft border border-warning/20 rounded-lg p-3 mb-4 space-y-1">
-              <p className="text-xs text-muted">Login email:</p>
-              <p className="font-mono text-sm text-ink">{loginRevealResult.login_email}</p>
-              <p className="text-xs text-muted mt-2">System-generated login — share this securely:</p>
+              <p className="text-xs text-muted">Username (admission number):</p>
+              <p className="font-mono text-sm text-ink">{loginRevealResult.student?.admission_number}</p>
+              <p className="text-xs text-muted mt-2">Temporary password — share this securely:</p>
               <p className="font-mono text-sm text-ink">{loginRevealResult.temporary_password}</p>
             </div>
             <Button className="w-full" onClick={() => setLoginRevealResult(null)}>Done</Button>
@@ -699,9 +737,9 @@ function BulkImportModal({ open, onClose }) {
   }
 
   function downloadCredentials() {
-    const header = 'name,admission_number,login_email,temporary_password\n';
+    const header = 'name,username,temporary_password\n';
     const rows = result.created
-      .map((s) => `${s.name},${s.admission_number},${s.login_email},${s.temporary_password}`)
+      .map((s) => `${s.name},${s.admission_number},${s.temporary_password ?? ''}`)
       .join('\n');
     downloadTextFile('new-student-logins.csv', header + rows);
   }

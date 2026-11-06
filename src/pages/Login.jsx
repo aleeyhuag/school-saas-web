@@ -134,7 +134,7 @@ export default function Login() {
             </div>
           </div>
         )}
-        <Field label="Email"><Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@school.com" /></Field>
+        <Field label="Email or admission number"><Input type="text" required autoCapitalize="none" autoCorrect="off" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@school.com or ABT-0001" /></Field>
         <Field label="Password"><Input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" /></Field>
         {schoolChoices.length > 0 && (
           <div className="mb-4 rounded-lg border border-border bg-bg p-3">

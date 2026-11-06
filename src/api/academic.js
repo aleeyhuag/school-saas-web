@@ -36,6 +36,37 @@ export const uploadStudentPhoto = (studentId, file) => {
   return api.post(`/students/${studentId}/photo`, formData).then((r) => r.data);
 };
 
+// Student sign-in details. Passwords are stored hashed and can never be read back,
+// so "getting a student's login" means setting a NEW password and showing it once.
+// Sent 10 students at a time because each password hash takes a moment.
+const LOGIN_BATCH_SIZE = 10;
+
+export const resetStudentLogins = async (studentIds, onProgress) => {
+  const credentials = [];
+  const skipped = [];
+
+  for (let start = 0; start < studentIds.length; start += LOGIN_BATCH_SIZE) {
+    const batch = studentIds.slice(start, start + LOGIN_BATCH_SIZE);
+    try {
+      const { data } = await api.post(
+        '/students/login-credentials',
+        { student_ids: batch },
+        { timeout: 60_000 }
+      );
+      credentials.push(...data.credentials);
+      skipped.push(...data.skipped);
+    } catch (err) {
+      if (start === 0 && err.response) throw err;
+      batch.forEach((id) =>
+        skipped.push({ student_id: id, name: null, reason: 'This batch did not finish — try these students again.' })
+      );
+    }
+    onProgress?.(Math.min(start + LOGIN_BATCH_SIZE, studentIds.length), studentIds.length);
+  }
+
+  return { credentials, skipped };
+};
+
 // Staff
 export const getStaff = (params) => api.get('/staff', { params }).then((r) => r.data);
 export const inviteUser = (payload) => api.post('/invite-user', payload).then((r) => r.data);
