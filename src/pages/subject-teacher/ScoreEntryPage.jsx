@@ -43,8 +43,11 @@ export default function ScoreEntryPage() {
   const termId = currentTermQuery.data?.id;
 
   const studentsQuery = useQuery({
-    queryKey: ['students', activeAssignment?.school_class_id],
-    queryFn: () => academicApi.getStudents({ school_class_id: activeAssignment.school_class_id }),
+    // "lite" skips guardians/login/class details this page never shows (3 fewer
+    // database queries on the server) — a separate key keeps it apart from the
+    // full student lists used elsewhere.
+    queryKey: ['students-roster', activeAssignment?.school_class_id],
+    queryFn: () => academicApi.getStudents({ school_class_id: activeAssignment.school_class_id, lite: 1 }),
     enabled: !!activeAssignment,
   });
 
