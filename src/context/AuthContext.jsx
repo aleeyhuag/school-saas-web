@@ -1,4 +1,3 @@
-import { clearPersistedQueryCache } from '../lib/queryCache';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import * as authApi from '../api/auth';
@@ -147,7 +146,6 @@ export function AuthProvider({ children }) {
     setRoles(data.roles ?? []);
     setBillingLocked(false);
     queryClient.clear();
-    clearPersistedQueryCache();
     window.location.href = '/';
   }
 
@@ -167,7 +165,6 @@ export function AuthProvider({ children }) {
       setBillingLocked(false);
       setAccessibleSchools([]);
       queryClient.clear();
-      clearPersistedQueryCache();
     }
   }
 

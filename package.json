@@ -17,11 +17,9 @@
     "@capacitor/cli": "^8.5.0",
     "@capacitor/core": "^8.5.0",
     "@capacitor/splash-screen": "^8.0.2",
-    "@tanstack/query-sync-storage-persister": "^5.107.1",
-    "@tanstack/react-query": "^5.107.1",
-    "@tanstack/react-query-persist-client": "^5.107.1",
-    "axios": "^1.18.1",
     "capacitor-secure-storage-plugin": "^0.13.0",
+    "@tanstack/react-query": "^5.101.4",
+    "axios": "^1.18.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1"

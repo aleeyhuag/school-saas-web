@@ -1,4 +1,3 @@
-import { clearPersistedQueryCache } from '../lib/queryCache';
 import axios from 'axios';
 import { Capacitor } from '@capacitor/core';
 
@@ -39,7 +38,6 @@ api.interceptors.response.use(
 
     if (status === 401) {
       localStorage.removeItem('token');
-      clearPersistedQueryCache();
       window.location.href = '/login';
     } else if (status === 403 && code === 'school_disabled') {
       // A billing lock is deliberately recoverable. Keep the authenticated
