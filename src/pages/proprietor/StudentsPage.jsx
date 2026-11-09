@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import * as academicApi from '../../api/academic';
 import { useAuth } from '../../context/AuthContext';
 import PageHeader from '../../components/PageHeader';
@@ -8,6 +8,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 import Modal from '../../components/ui/Modal';
 import StudentLoginSlipsModal from '../../components/StudentLoginSlipsModal';
 import { Field, Input, Select } from '../../components/ui/FormFields';
@@ -60,6 +61,8 @@ export default function StudentsPage() {
         page,
         per_page: 25,
       }),
+    // Keep the current page on screen while the next one loads (no blank flash).
+    placeholderData: keepPreviousData,
   });
 
   const students = studentsQuery.data?.data ?? [];
@@ -291,13 +294,16 @@ export default function StudentsPage() {
             </Select>
           </div>
 
+          <QueryBoundary
+            query={studentsQuery}
+            loadingLabel="Loading students…"
+            errorTitle="Could not load students"
+          >
           <DataTable
             columns={columns}
             rows={students}
             emptyMessage={
-              studentsQuery.isLoading
-                ? 'Loading…'
-                : debouncedSearch
+              debouncedSearch
                 ? `No students match "${debouncedSearch}".`
                 : 'No students yet — add your first one, or set up a class first.'
             }
@@ -318,6 +324,7 @@ export default function StudentsPage() {
               </div>
             </div>
           )}
+          </QueryBoundary>
         </Card>
       </div>
 

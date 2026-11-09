@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import * as parentsApi from '../../api/parents';
 import * as academicApi from '../../api/academic';
 import PageHeader from '../../components/PageHeader';
@@ -7,6 +7,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 import Modal from '../../components/ui/Modal';
 import { Field, Input } from '../../components/ui/FormFields';
 
@@ -40,6 +41,8 @@ export default function ParentsPage() {
   const parentsQuery = useQuery({
     queryKey: ['parents', debouncedSearch],
     queryFn: () => parentsApi.getParents({ search: debouncedSearch || undefined }),
+    // Keep the current list on screen while a new search loads.
+    placeholderData: keepPreviousData,
   });
 
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
@@ -159,11 +162,13 @@ export default function ParentsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <DataTable
-            columns={columns}
-            rows={parentsQuery.data}
-            emptyMessage={parentsQuery.isLoading ? 'Loading…' : 'No parents invited yet.'}
-          />
+          <QueryBoundary query={parentsQuery} loadingLabel="Loading parents…" errorTitle="Could not load parents">
+            <DataTable
+              columns={columns}
+              rows={parentsQuery.data}
+              emptyMessage={debouncedSearch ? `No parents match "${debouncedSearch}".` : 'No parents invited yet.'}
+            />
+          </QueryBoundary>
         </Card>
       </div>
 

@@ -7,6 +7,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 import Modal from '../../components/ui/Modal';
 import { Field, Input, Select } from '../../components/ui/FormFields';
 
@@ -213,11 +214,9 @@ export default function StaffPage() {
 
       <div className="p-4 md:p-8">
         <Card>
-          <DataTable
-            columns={columns}
-            rows={staffQuery.data}
-            emptyMessage={staffQuery.isLoading ? 'Loading…' : 'No staff invited yet.'}
-          />
+          <QueryBoundary query={staffQuery} loadingLabel="Loading staff…" errorTitle="Could not load staff">
+            <DataTable columns={columns} rows={staffQuery.data} emptyMessage="No staff invited yet." />
+          </QueryBoundary>
         </Card>
       </div>
 
