@@ -35,8 +35,8 @@ export default function ClassTeacherAttendancePage() {
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
 
   const studentsQuery = useQuery({
-    queryKey: ['students', schoolClassId],
-    queryFn: () => academicApi.getStudents({ school_class_id: schoolClassId }),
+    queryKey: ['students-roster', schoolClassId],
+    queryFn: () => academicApi.getStudents({ school_class_id: schoolClassId, lite: 1 }),
     enabled: !!schoolClassId,
   });
 
