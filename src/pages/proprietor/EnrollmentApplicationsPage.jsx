@@ -5,6 +5,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 import Modal from '../../components/ui/Modal';
 import PageHeader from '../../components/PageHeader';
 import { Field, Textarea } from '../../components/ui/FormFields';
@@ -104,11 +105,9 @@ export default function EnrollmentApplicationsPage() {
 
       <div className="p-4 md:p-8">
         <Card>
-          <DataTable
-            columns={columns}
-            rows={listQuery.data}
-            emptyMessage={listQuery.isLoading ? 'Loading…' : 'No applications yet.'}
-          />
+          <QueryBoundary query={listQuery} loadingLabel="Loading applications…" errorTitle="Could not load the applications">
+            <DataTable columns={columns} rows={listQuery.data} emptyMessage="No applications yet." />
+          </QueryBoundary>
         </Card>
       </div>
 

@@ -6,6 +6,7 @@ import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 import { Field, Input, Select, Textarea } from '../../components/ui/FormFields';
 
 const AUDIENCE_LABELS = {
@@ -167,8 +168,8 @@ export default function AnnouncementsPage() {
           </Card>
         )}
 
+        <QueryBoundary query={feedQuery} loadingLabel="Loading announcements…" errorTitle="Could not load announcements">
         <div className="space-y-3">
-          {feedQuery.isLoading && <p className="text-sm text-muted">Loading…</p>}
           {feedQuery.data?.announcements.length === 0 && (
             <Card><p className="text-sm text-muted text-center py-6">No announcements yet.</p></Card>
           )}
@@ -197,6 +198,7 @@ export default function AnnouncementsPage() {
             </Card>
           ))}
         </div>
+        </QueryBoundary>
       </div>
     </>
   );

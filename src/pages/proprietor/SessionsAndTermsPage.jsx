@@ -6,6 +6,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 import Modal from '../../components/ui/Modal';
 import { Field, Input, Select } from '../../components/ui/FormFields';
 
@@ -226,11 +227,13 @@ export default function SessionsAndTermsPage() {
             </Button>
           }
         >
-          <DataTable
-            columns={sessionColumns}
-            rows={sessionsQuery.data}
-            emptyMessage={sessionsQuery.isLoading ? 'Loading…' : 'No sessions yet — add your first one.'}
-          />
+          <QueryBoundary query={sessionsQuery} loadingLabel="Loading sessions…" errorTitle="Could not load the sessions">
+            <DataTable
+              columns={sessionColumns}
+              rows={sessionsQuery.data}
+              emptyMessage="No sessions yet — add your first one."
+            />
+          </QueryBoundary>
         </Card>
 
         <Card

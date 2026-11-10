@@ -8,6 +8,7 @@ import * as myAssignmentsApi from '../../api/myAssignments';
 import { useAuth } from '../../context/AuthContext';
 import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 import { Select } from '../../components/ui/FormFields';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
@@ -99,7 +100,7 @@ export default function TimetableViewPage() {
     });
   }
 
-  const isLoading = isTeacher ? myScheduleQuery.isLoading : timetableQuery.isLoading;
+  const activeQuery = isTeacher ? myScheduleQuery : timetableQuery;
 
   return (
     <>
@@ -134,7 +135,7 @@ export default function TimetableViewPage() {
           <Card><p className="text-sm text-muted">Select a class to view its timetable.</p></Card>
         ) : (
           <Card>
-            {isLoading ? <p className="text-sm text-muted">Loading…</p> : (
+            <QueryBoundary query={activeQuery} loadingLabel="Loading the timetable…" errorTitle="Could not load the timetable">
               <div className="overflow-x-auto -mx-5">
                 <table className="w-full text-sm">
                   <thead>
@@ -186,7 +187,7 @@ export default function TimetableViewPage() {
                   </tbody>
                 </table>
               </div>
-            )}
+            </QueryBoundary>
           </Card>
         )}
       </div>

@@ -6,6 +6,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import { Input, Select, Textarea } from '../../components/ui/FormFields';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 
 const ACTIONS = [
   { value: 'promoted', label: 'Promote' },
@@ -72,6 +73,13 @@ export default function PromotionPage() {
   }
 
   return <>
+    {optionsQuery.isError && !optionsQuery.data && (
+      <div className="p-4 md:p-8 pb-0">
+        <QueryBoundary query={optionsQuery} errorTitle="Could not load classes and sessions">
+          <span />
+        </QueryBoundary>
+      </div>
+    )}
     <PageHeader title="Promotion & Progression" description="Move students in bulk while keeping a permanent decision history." />
     <div className="p-4 md:p-8 space-y-5">
       <Card title="1. Choose the academic sessions">
@@ -99,6 +107,7 @@ export default function PromotionPage() {
           <span className="text-sm text-muted">{selected.length} of {students.length} selected</span>
           <Button variant="secondary" size="sm" onClick={selectAll}>{selected.length === students.length ? 'Clear all' : 'Select all'}</Button>
         </div>}
+        <QueryBoundary query={studentsQuery} loadingLabel="Loading students…" errorTitle="Could not load the students">
         <div className="space-y-2 max-h-[420px] overflow-y-auto">
           {students.map((s) => <label key={s.id} className="flex items-center gap-3 p-3 border border-border rounded-lg hover:bg-bg cursor-pointer">
             <input type="checkbox" checked={selected.includes(s.id)} onChange={() => toggle(s.id)} />
@@ -107,6 +116,7 @@ export default function PromotionPage() {
           </label>)}
           {!studentsQuery.isLoading && sourceClass && !students.length && <p className="text-sm text-muted py-6 text-center">No active students found.</p>}
         </div>
+        </QueryBoundary>
       </Card>
 
       <Card title="3. Decide what happens to the selected students">

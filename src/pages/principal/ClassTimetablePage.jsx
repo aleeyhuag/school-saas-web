@@ -5,6 +5,7 @@ import * as academicApi from '../../api/academic';
 import * as sessionsApi from '../../api/sessions';
 import PageHeader from '../../components/PageHeader';
 import Card from '../../components/ui/Card';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
 import { Field, Input, Select } from '../../components/ui/FormFields';
@@ -209,6 +210,7 @@ export default function ClassTimetablePage({ readOnly = false }) {
           <Card><p className="text-sm text-muted">Set up at least one period above before building the timetable.</p></Card>
         ) : (
           <Card title={selectedClass ? `${selectedClass.name} ${selectedClass.arm}` : ''}>
+            <QueryBoundary query={timetableQuery} loadingLabel="Loading the timetable…" errorTitle="Could not load the timetable">
             <div className="overflow-x-auto -mx-5">
               <table className="w-full text-sm">
                 <thead>
@@ -260,6 +262,7 @@ export default function ClassTimetablePage({ readOnly = false }) {
                 </tbody>
               </table>
             </div>
+            </QueryBoundary>
           </Card>
         )}
       </div>

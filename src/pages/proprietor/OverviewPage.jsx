@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
 import * as academicApi from '../../api/academic';
 import * as announcementsApi from '../../api/announcements';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 
 function formatNaira(amount) { return `₦${Number(amount ?? 0).toLocaleString()}`; }
 function firstName(name) { return name?.trim()?.split(/\s+/)[0] || 'there'; }
@@ -55,10 +56,17 @@ export default function ModernOverviewPage() {
           </div>
         </section>
 
+        {/* A failed request must never show as "0 students". */}
+        {statsQuery.isError && !stats && (
+          <QueryBoundary query={statsQuery} errorTitle="Could not load the school numbers">
+            <span />
+          </QueryBoundary>
+        )}
+
         <section className="grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
           {[
-            ['Students', stats?.students_count ?? 0, 'Total enrolled', '☺'],
-            ['Staff', stats?.staff_count ?? 0, 'Teachers & admin staff', '⚇'],
+            ['Students', stats ? stats.students_count : '—', 'Total enrolled', '☺'],
+            ['Staff', stats ? stats.staff_count : '—', 'Teachers & admin staff', '⚇'],
             ['Fees collected', stats?.has_current_term ? formatNaira(stats?.fee_collected_this_term) : '—', stats?.has_current_term ? 'This term' : 'No current term', '₦'],
             ['Attendance', attendance != null ? `${Number(attendance).toFixed(0)}%` : '—', 'Current available rate', '✓'],
           ].map(([label, value, hint, icon]) => (
@@ -81,7 +89,7 @@ export default function ModernOverviewPage() {
           <section className="bg-surface border border-border rounded-2xl p-5 md:p-6">
             <div className="flex items-center justify-between gap-3 mb-4"><div><h2 className="font-display text-lg font-bold text-ink">Recent updates</h2><p className="text-sm text-muted mt-1">Latest school announcements.</p></div><Link to={`/${role === 'principal' ? 'principal' : role === 'proprietor' ? 'proprietor' : 'teacher'}/announcements`} className="text-xs font-semibold text-primary">View all</Link></div>
             <div className="space-y-3">
-              {announcementsQuery.isLoading ? <p className="text-sm text-muted">Loading updates…</p> : announcements.length === 0 ? <p className="text-sm text-muted">No recent announcements.</p> : announcements.slice(0, 4).map((item, index) => <div key={item.id ?? index} className="flex gap-3 border-b border-border last:border-0 pb-3 last:pb-0"><span className="w-2 h-2 rounded-full bg-accent mt-2 shrink-0" /><div className="min-w-0"><p className="text-sm font-medium text-ink line-clamp-2">{item.title ?? item.message ?? 'School announcement'}</p><p className="text-xs text-muted mt-1">{item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Recent'}</p></div></div>)}
+              {announcementsQuery.isLoading ? <p className="text-sm text-muted">Loading updates…</p> : announcementsQuery.isError ? <p className="text-sm text-danger">Could not load updates. <button type="button" className="underline" onClick={() => announcementsQuery.refetch()}>Try again</button></p> : announcements.length === 0 ? <p className="text-sm text-muted">No recent announcements.</p> : announcements.slice(0, 4).map((item, index) => <div key={item.id ?? index} className="flex gap-3 border-b border-border last:border-0 pb-3 last:pb-0"><span className="w-2 h-2 rounded-full bg-accent mt-2 shrink-0" /><div className="min-w-0"><p className="text-sm font-medium text-ink line-clamp-2">{item.title ?? item.message ?? 'School announcement'}</p><p className="text-xs text-muted mt-1">{item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Recent'}</p></div></div>)}
             </div>
           </section>
         </div>

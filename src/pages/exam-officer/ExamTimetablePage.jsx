@@ -8,6 +8,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 import Modal from '../../components/ui/Modal';
 import { Field, Input, Select } from '../../components/ui/FormFields';
 
@@ -174,11 +175,13 @@ export default function ExamTimetablePage({ readOnly = false }) {
         </div>
 
         <Card>
-          <DataTable
-            columns={columns}
-            rows={examQuery.data}
-            emptyMessage={examQuery.isLoading ? 'Loading…' : 'No exams scheduled for this term yet.'}
-          />
+          <QueryBoundary query={examQuery} loadingLabel="Loading the exam timetable…" errorTitle="Could not load the exam timetable">
+            <DataTable
+              columns={columns}
+              rows={examQuery.data}
+              emptyMessage="No exams scheduled for this term yet."
+            />
+          </QueryBoundary>
         </Card>
       </div>
 

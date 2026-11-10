@@ -8,6 +8,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 import Modal from '../../components/ui/Modal';
 import { Field, Input, Select } from '../../components/ui/FormFields';
 
@@ -219,11 +220,13 @@ export default function FeesPage() {
             </Button>
           }
         >
-          <DataTable
-            columns={structureColumns}
-            rows={structuresQuery.data}
-            emptyMessage={structuresQuery.isLoading ? 'Loading…' : 'No fees set up for this term yet.'}
-          />
+          <QueryBoundary query={structuresQuery} loadingLabel="Loading fees…" errorTitle="Could not load the fees">
+            <DataTable
+              columns={structureColumns}
+              rows={structuresQuery.data}
+              emptyMessage="No fees set up for this term yet."
+            />
+          </QueryBoundary>
         </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -293,17 +296,17 @@ export default function FeesPage() {
                 <option key={c.id} value={c.id}>{c.name} {c.arm}</option>
               ))}
             </Select>
-            <DataTable
-              columns={defaulterColumns}
-              rows={defaultersQuery.data}
-              emptyMessage={
-                !defaulterClassId
-                  ? 'Select a class to view its defaulters.'
-                  : defaultersQuery.isLoading
-                  ? 'Loading…'
-                  : 'No outstanding balances for this class — everyone is paid up.'
-              }
-            />
+            <QueryBoundary query={defaultersQuery} loadingLabel="Loading defaulters…" errorTitle="Could not load the defaulters">
+              <DataTable
+                columns={defaulterColumns}
+                rows={defaultersQuery.data}
+                emptyMessage={
+                  !defaulterClassId
+                    ? 'Select a class to view its defaulters.'
+                    : 'No outstanding balances for this class — everyone is paid up.'
+                }
+              />
+            </QueryBoundary>
           </Card>
         </div>
       </div>

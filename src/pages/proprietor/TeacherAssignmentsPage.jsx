@@ -6,6 +6,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 import Modal from '../../components/ui/Modal';
 import { Field, Select } from '../../components/ui/FormFields';
 
@@ -117,15 +118,13 @@ export default function TeacherAssignmentsPage() {
             </Select>
           }
         >
-          <DataTable
-            columns={columns}
-            rows={assignmentsQuery.data}
-            emptyMessage={
-              assignmentsQuery.isLoading
-                ? 'Loading…'
-                : 'No assignments yet — invite teachers under Staff first, then assign them here.'
-            }
-          />
+          <QueryBoundary query={assignmentsQuery} loadingLabel="Loading assignments…" errorTitle="Could not load the assignments">
+            <DataTable
+              columns={columns}
+              rows={assignmentsQuery.data}
+              emptyMessage="No assignments yet — invite teachers under Staff first, then assign them here."
+            />
+          </QueryBoundary>
         </Card>
       </div>
 

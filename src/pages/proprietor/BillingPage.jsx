@@ -6,6 +6,7 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import { Field, Input } from '../../components/ui/FormFields';
+import QueryBoundary from '../../components/ui/QueryBoundary';
 
 function formatNaira(kobo) {
   return `₦${(kobo / 100).toLocaleString()}`;
@@ -23,7 +24,8 @@ const STATUS_BADGE = {
 
 export default function BillingPage() {
   const queryClient = useQueryClient();
-  const { data, isLoading } = useQuery({ queryKey: ['billing-status'], queryFn: billingApi.getBillingStatus });
+  const billingQuery = useQuery({ queryKey: ['billing-status'], queryFn: billingApi.getBillingStatus });
+  const data = billingQuery.data;
   const { data: plans } = useQuery({ queryKey: ['billing-plans'], queryFn: billingApi.getBillingPlans });
 
   // Prevents duplicate payments: block new submissions once the
@@ -54,11 +56,15 @@ export default function BillingPage() {
     },
   });
 
-  if (isLoading) {
+  if (!data) {
     return (
       <>
         <PageHeader title="Billing" />
-        <div className="p-4 md:p-8"><p className="text-sm text-muted">Loading…</p></div>
+        <div className="p-4 md:p-8">
+          <QueryBoundary query={billingQuery} loadingLabel="Loading billing…" errorTitle="Could not load billing">
+            <p className="text-sm text-muted">No billing information available.</p>
+          </QueryBoundary>
+        </div>
       </>
     );
   }
