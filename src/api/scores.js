@@ -7,6 +7,9 @@ import api from './client';
  */
 
 export const getSubjectScores = (params) => api.get('/subject-scores', { params }).then((r) => r.data);
+// "Save all": one request for a whole class's scores in a subject (all-or-nothing).
+export const saveSubjectScoresBulk = (payload) =>
+  api.post('/subject-scores/bulk', payload, { timeout: 60_000 }).then((r) => r.data);
 export const saveSubjectScore = (payload) => api.post('/subject-scores', payload).then((r) => r.data);
 
 export const getClassMarksheet = (schoolClassId, termId) =>

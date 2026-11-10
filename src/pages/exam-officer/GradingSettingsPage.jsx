@@ -20,34 +20,68 @@ export default function GradingSettingsPage() {
     queryFn: gradingApi.getAssessmentSettings,
   });
 
-  const [weightsForm, setWeightsForm] = useState({ ca_weight: 30, assignment_weight: 10, exam_weight: 60 });
+  const [weightsForm, setWeightsForm] = useState({
+    ca_count: 1,
+    ca_weight: 30,
+    ca2_weight: 0,
+    ca3_weight: 0,
+    assignment_weight: 10,
+    exam_weight: 60,
+  });
   const [weightsSuccess, setWeightsSuccess] = useState(false);
+  const [weightsError, setWeightsError] = useState(null);
 
   // Sync the form once the real settings load, so we're not editing
   // against stale defaults.
   useEffect(() => {
     if (settingsQuery.data) {
       setWeightsForm({
+        ca_count: settingsQuery.data.ca_count ?? 1,
         ca_weight: settingsQuery.data.ca_weight,
+        ca2_weight: settingsQuery.data.ca2_weight ?? 0,
+        ca3_weight: settingsQuery.data.ca3_weight ?? 0,
         assignment_weight: settingsQuery.data.assignment_weight,
         exam_weight: settingsQuery.data.exam_weight,
       });
     }
   }, [settingsQuery.data]);
 
+  const caCount = Number(weightsForm.ca_count);
+  const caLabel = (n) => (caCount > 1 ? `CA ${n}` : 'CA');
+
+  // Only the CAs this school actually runs count towards the 100.
   const weightsSum =
     Number(weightsForm.ca_weight || 0) +
+    (caCount >= 2 ? Number(weightsForm.ca2_weight || 0) : 0) +
+    (caCount >= 3 ? Number(weightsForm.ca3_weight || 0) : 0) +
     Number(weightsForm.assignment_weight || 0) +
     Number(weightsForm.exam_weight || 0);
-  const weightsValid = weightsSum === 100;
+  const weightsValid = weightsSum === 100 && Number(weightsForm.exam_weight || 0) > 0;
+
+  // What teachers will see when entering scores.
+  const previewParts = [
+    ...[weightsForm.ca_weight, weightsForm.ca2_weight, weightsForm.ca3_weight]
+      .slice(0, caCount)
+      .map((w, i) => `${caLabel(i + 1)} /${Number(w || 0)}`),
+    ...(Number(weightsForm.assignment_weight || 0) > 0 ? [`Assignment /${Number(weightsForm.assignment_weight)}`] : []),
+    `Exam /${Number(weightsForm.exam_weight || 0)}`,
+  ];
 
   const updateWeightsMutation = useMutation({
     mutationFn: gradingApi.updateAssessmentSettings,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assessment-settings'] });
+      setWeightsError(null);
       setWeightsSuccess(true);
     },
-    onError: () => setWeightsSuccess(false),
+    onError: (err) => {
+      setWeightsSuccess(false);
+      setWeightsError(
+        err.response?.data?.errors?.ca_weight?.[0] ??
+          err.response?.data?.message ??
+          'Could not save the assessment setup. Please try again.'
+      );
+    },
   });
 
   // --- Grade boundaries ---
@@ -133,29 +167,58 @@ export default function GradingSettingsPage() {
     <>
       <PageHeader
         title="Grading Settings"
-        description="Configure how CA, assignment, and exam scores combine into a result, and how totals map to grades."
+        description="Set how many CAs your school has, what each score carries, and how totals map to grades."
       />
 
       <div className="p-4 md:p-8 space-y-6">
-        <Card title="Assessment Weights">
+        <Card title="Assessment Setup">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               setWeightsSuccess(false);
+              setWeightsError(null);
               updateWeightsMutation.mutate({
-                ca_weight: Number(weightsForm.ca_weight),
-                assignment_weight: Number(weightsForm.assignment_weight),
-                exam_weight: Number(weightsForm.exam_weight),
+                ca_count: caCount,
+                ca_weight: Number(weightsForm.ca_weight || 0),
+                ca2_weight: caCount >= 2 ? Number(weightsForm.ca2_weight || 0) : 0,
+                ca3_weight: caCount >= 3 ? Number(weightsForm.ca3_weight || 0) : 0,
+                assignment_weight: Number(weightsForm.assignment_weight || 0),
+                exam_weight: Number(weightsForm.exam_weight || 0),
               });
             }}
           >
+            <p className="text-xs text-muted mb-4">
+              Teachers enter each score directly out of its weight — a CA weighted 10 is marked out of 10, an exam
+              weighted 60 out of 60. There is no separate &ldquo;max score&rdquo; for them to fill in. Set the assignment
+              to 0 if your school has none.
+            </p>
             {weightsSuccess && (
               <p className="text-sm text-success bg-success-soft rounded-lg px-3 py-2 mb-4">
-                Weights updated — every result computes with these from now on.
+                Saved — score entry, marksheets and report cards now use this setup.
               </p>
             )}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2">
-              <Field label="Continuous Assessment (%)">
+            {weightsError && (
+              <p className="text-sm text-danger bg-danger-soft rounded-lg px-3 py-2 mb-4">{weightsError}</p>
+            )}
+
+            <Field label="How many CAs (continuous assessments) does your school have each term?">
+              <div className="flex gap-2">
+                {[1, 2, 3].map((n) => (
+                  <Button
+                    key={n}
+                    type="button"
+                    size="sm"
+                    variant={caCount === n ? 'primary' : 'secondary'}
+                    onClick={() => setWeightsForm({ ...weightsForm, ca_count: n })}
+                  >
+                    {n} {n === 1 ? 'CA' : 'CAs'}
+                  </Button>
+                ))}
+              </div>
+            </Field>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-2 mt-4">
+              <Field label={`${caLabel(1)} weight`}>
                 <Input
                   type="number"
                   min="0"
@@ -165,7 +228,31 @@ export default function GradingSettingsPage() {
                   onChange={(e) => setWeightsForm({ ...weightsForm, ca_weight: e.target.value })}
                 />
               </Field>
-              <Field label="Assignment (%)">
+              {caCount >= 2 && (
+                <Field label="CA 2 weight">
+                  <Input
+                    type="number"
+                    min="0"
+                    max="100"
+                    required
+                    value={weightsForm.ca2_weight}
+                    onChange={(e) => setWeightsForm({ ...weightsForm, ca2_weight: e.target.value })}
+                  />
+                </Field>
+              )}
+              {caCount >= 3 && (
+                <Field label="CA 3 weight">
+                  <Input
+                    type="number"
+                    min="0"
+                    max="100"
+                    required
+                    value={weightsForm.ca3_weight}
+                    onChange={(e) => setWeightsForm({ ...weightsForm, ca3_weight: e.target.value })}
+                  />
+                </Field>
+              )}
+              <Field label="Assignment weight">
                 <Input
                   type="number"
                   min="0"
@@ -175,7 +262,7 @@ export default function GradingSettingsPage() {
                   onChange={(e) => setWeightsForm({ ...weightsForm, assignment_weight: e.target.value })}
                 />
               </Field>
-              <Field label="Exam (%)">
+              <Field label="Exam weight">
                 <Input
                   type="number"
                   min="0"
@@ -186,11 +273,14 @@ export default function GradingSettingsPage() {
                 />
               </Field>
             </div>
-            <p className={`text-sm mb-4 ${weightsValid ? 'text-success' : 'text-danger'}`}>
-              Total: {weightsSum}% {weightsValid ? '✓' : '— must equal 100%'}
+            <p className={`text-sm mb-2 ${weightsValid ? 'text-success' : 'text-danger'}`}>
+              Total: {weightsSum} {weightsValid ? '✓' : '— must equal 100'}
+            </p>
+            <p className="text-xs text-muted mb-4">
+              Teachers will enter: <span className="font-medium text-ink">{previewParts.join(' · ')}</span>
             </p>
             <Button type="submit" disabled={!weightsValid || updateWeightsMutation.isPending}>
-              {updateWeightsMutation.isPending ? 'Saving…' : 'Save weights'}
+              {updateWeightsMutation.isPending ? 'Saving…' : 'Save assessment setup'}
             </Button>
           </form>
         </Card>

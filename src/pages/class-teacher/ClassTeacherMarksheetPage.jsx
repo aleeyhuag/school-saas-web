@@ -231,6 +231,7 @@ export default function ClassTeacherMarksheetPage() {
               subject={subjects.find((s) => s.id === Number(viewSubjectId))}
               rows={marksheetRows}
               subjectId={Number(viewSubjectId)}
+              components={marksheetQuery.data?.components}
               isLoading={marksheetQuery.isLoading}
             />
           ) : (
@@ -330,10 +331,17 @@ export default function ClassTeacherMarksheetPage() {
  * student, not just the total+grade the overview grid shows. Uses
  * data already fetched for the overview (no extra API call).
  */
-function SubjectDetailTable({ subject, rows, subjectId, isLoading }) {
+function SubjectDetailTable({ subject, rows, subjectId, isLoading, components }) {
   if (isLoading) {
     return <p className="text-sm text-muted py-8 text-center">Loading…</p>;
   }
+
+  // The columns this school uses (CA 1-3, Assignment, Exam) come from the server.
+  const scoreColumns = components ?? [
+    { key: 'ca', label: 'CA', weight: 30 },
+    { key: 'assignment', label: 'Assignment', weight: 10 },
+    { key: 'exam', label: 'Exam', weight: 60 },
+  ];
 
   const studentsWithScores = (rows ?? []).filter((row) => row.scores[subjectId]);
 
@@ -351,9 +359,11 @@ function SubjectDetailTable({ subject, rows, subjectId, isLoading }) {
         <thead>
           <tr className="border-b border-border text-left text-xs font-medium text-muted uppercase tracking-wide">
             <th className="px-5 py-2">Student</th>
-            <th className="px-3 py-2">CA</th>
-            <th className="px-3 py-2">Assignment</th>
-            <th className="px-3 py-2">Exam</th>
+            {scoreColumns.map((column) => (
+              <th key={column.key} className="px-3 py-2 whitespace-nowrap">
+                {column.label} <span className="normal-case font-normal">({column.weight})</span>
+              </th>
+            ))}
             <th className="px-3 py-2">Total</th>
             <th className="px-3 py-2">Grade</th>
             <th className="px-3 py-2">Comment</th>
@@ -365,9 +375,11 @@ function SubjectDetailTable({ subject, rows, subjectId, isLoading }) {
             return (
               <tr key={row.student_id} className="border-b border-border last:border-0">
                 <td className="px-5 py-3 font-medium text-ink whitespace-nowrap">{row.student_name}</td>
-                <td className="px-3 py-3">{cell.ca.score ?? '—'} / {cell.ca.max}</td>
-                <td className="px-3 py-3">{cell.assignment.score ?? '—'} / {cell.assignment.max}</td>
-                <td className="px-3 py-3">{cell.exam.score ?? '—'} / {cell.exam.max}</td>
+                {scoreColumns.map((column) => (
+                  <td key={column.key} className="px-3 py-3">
+                    {cell[column.key]?.score == null ? '—' : cell[column.key].weighted}
+                  </td>
+                ))}
                 <td className="px-3 py-3 font-semibold text-ink">{cell.total_score}</td>
                 <td className="px-3 py-3"><Badge tone="primary">{cell.grade ?? '—'}</Badge></td>
                 <td className="px-3 py-3 text-muted text-xs">{cell.teacher_comment ?? '—'}</td>

@@ -92,6 +92,20 @@ export async function submitOrQueue(type, payload) {
   }
 }
 
+/**
+ * Straight to the offline queue, without trying the network first. Used when a
+ * "Save all" already found the connection down — retrying each row with its own
+ * 8-second timeout would make a class of 40 students wait several minutes.
+ */
+export async function queueOnly(type, payload) {
+  const clientUuid = newUuid();
+  const recordedAt = new Date().toISOString();
+  const endpoint = ENDPOINTS[type];
+  const body = { ...payload, client_uuid: clientUuid, recorded_at: recordedAt };
+  await enqueue({ clientUuid, type, endpoint, payload: body, recordedAt });
+  return { queued: true, clientUuid };
+}
+
 function isNetworkError(error) {
   // Axios sets `error.response` only when the server actually
   // responded. No response at all means the request never reached

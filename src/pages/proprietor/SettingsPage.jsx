@@ -48,21 +48,13 @@ export default function SettingsPage() {
             weighted.
           </p>
           {settingsQuery.data ? (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold font-display text-ink">{settingsQuery.data.ca_weight}%</p>
-                <p className="text-xs text-muted mt-1">Continuous Assessment</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold font-display text-ink">
-                  {settingsQuery.data.assignment_weight}%
-                </p>
-                <p className="text-xs text-muted mt-1">Assignment</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold font-display text-ink">{settingsQuery.data.exam_weight}%</p>
-                <p className="text-xs text-muted mt-1">Exam</p>
-              </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              {(settingsQuery.data.components ?? []).map((component) => (
+                <div key={component.key} className="text-center">
+                  <p className="text-2xl font-bold font-display text-ink">{component.weight}%</p>
+                  <p className="text-xs text-muted mt-1">{component.label}</p>
+                </div>
+              ))}
             </div>
           ) : (
             <p className="text-sm text-muted">Loading…</p>
